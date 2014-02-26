@@ -1,0 +1,60 @@
+<!doctype html>
+<html>
+<style type="text/css">
+    #myCanvas{
+        width: 500px;
+        height: 500px;
+        border: 1px solid #c3c3c3;
+        background: url('../public/images/BG.png');
+    }
+    #myCanvas:hover {
+        cursor:pointer;
+    }
+</style>
+<script type="text/javascript">
+    
+</script>
+<body>
+    <canvas id="myCanvas">
+    Your browser does not support the HTML5 canvas tag.
+    </canvas>
+    <img src="../public/images/pig.png" id="pic_pig">
+
+    <script type="text/javascript">
+        var cnv = document.getElementById('myCanvas'),
+            cnv_context = cnv.getContext('2d'),
+            pig_img = new Image(),
+            checkDown = function(){
+
+            },
+            drawBoard = function (){
+                cnv_context.drawImage(pig_img, 0, 0, cnv.width, cnv.height);
+                //cnv_context.clearRect(50, 50, 50, 50);
+            },
+            clearImg = function(x, y) {
+                var clear_size = 10;
+                cnv_context.clearRect(x, y, clear_size, clear_size);
+            },
+            mouseMoveFuc = function(e) {
+                var clear_size = 10;
+                cnv_context.clearRect(e.clientX, e.clientY, clear_size, clear_size);
+                //clearImg(e.clientX, e.clientY);
+            };
+            pig_img.src = "../public/images/pig.png";            
+
+
+            cnv.addEventListener('mousedown', function(e){
+
+            }, false);
+            cnv.addEventListener('mouseup', function(e){
+            }, false);
+            cnv.addEventListener('mousemove', function(e){
+                mouseMoveFuc(e);
+            }, false);
+
+            pig_img.addEventListener('load', drawBoard,false);
+    </script>
+
+
+</body>
+</html>
