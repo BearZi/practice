@@ -1,60 +1,95 @@
 <!doctype html>
 <html>
 <style type="text/css">
+    #drawTable {
+        position: absolute;
+        top: 0;
+        left: 0;        
+    }
     #myCanvas{
-        width: 500px;
-        height: 500px;
+        position: relative;
         border: 1px solid #c3c3c3;
         background: url('../public/images/BG.png');
     }
     #myCanvas:hover {
         cursor:pointer;
     }
+    #colorTable {
+        display: inline-block;
+        width: 100px;
+        height: 500px;
+        border: solid 1px #ccc;
+        vertical-align: top;
+    }
+    .colorBlock {
+        width: 50px;
+        height: 50px;
+        display: inline-block;
+    }
+    .colorBlock.red {
+        background-color: red;
+    }
+    .colorBlock.green {
+        background-color: green;
+    }
+    .colorBlock.blue {
+        background-color: blue;
+    }
+    .colorBlock.pink {
+        background-color: pink;
+    }
 </style>
-<script type="text/javascript">
-    
-</script>
+
 <body>
-    <canvas id="myCanvas">
-    Your browser does not support the HTML5 canvas tag.
-    </canvas>
-    <img src="../public/images/pig.png" id="pic_pig">
+    <div id="drawTable">
+        <canvas id="myCanvas" width=500 height=500></canvas>
+        <div id="colorTable">
+            <div class="colorBlock red"></div><div class="colorBlock green"></div>
+            <div class="colorBlock blue"></div><div class="colorBlock pink"></div>
+        </div>
+    </div>
+
 
     <script type="text/javascript">
         var cnv = document.getElementById('myCanvas'),
             cnv_context = cnv.getContext('2d'),
             pig_img = new Image(),
-            checkDown = function(){
-
-            },
+            check_mouse_down = 0,
+            color_block = document.querySelectorAll('.colorBlock'),
             drawBoard = function (){
                 cnv_context.drawImage(pig_img, 0, 0, cnv.width, cnv.height);
                 //cnv_context.clearRect(50, 50, 50, 50);
             },
             clearImg = function(x, y) {
-                var clear_size = 10;
+                var clear_size = 100;
+                x = x - (clear_size/2);
+                y = y - (clear_size/2);
                 cnv_context.clearRect(x, y, clear_size, clear_size);
-            },
-            mouseMoveFuc = function(e) {
-                var clear_size = 10;
-                cnv_context.clearRect(e.clientX, e.clientY, clear_size, clear_size);
-                //clearImg(e.clientX, e.clientY);
             };
             pig_img.src = "../public/images/pig.png";            
 
-
+            //mouse status
             cnv.addEventListener('mousedown', function(e){
-
-            }, false);
-            cnv.addEventListener('mouseup', function(e){
+                check_mouse_down = 1
             }, false);
             cnv.addEventListener('mousemove', function(e){
-                mouseMoveFuc(e);
+                if (check_mouse_down) {
+                    console.log('%o / %o', e.clientX, e.clientY)
+                    clearImg(e.clientX, e.clientY);
+                }
+            }, false);
+            document.querySelector('body').addEventListener('mouseup', function(e){
+                check_mouse_down = 0;
             }, false);
 
+
+            color_block.addEventListener('click', function(){
+                
+            }, false);
+            
             pig_img.addEventListener('load', drawBoard,false);
     </script>
-
+    
 
 </body>
 </html>
