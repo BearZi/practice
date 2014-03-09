@@ -26,17 +26,26 @@
         height: 50px;
         display: inline-block;
     }
-    .colorBlock.red {
+    .colorBlock.plate-red {
         background-color: red;
     }
-    .colorBlock.green {
+    .colorBlock.plate-green {
         background-color: green;
     }
-    .colorBlock.blue {
+    .colorBlock.plate-blue {
         background-color: blue;
     }
-    .colorBlock.pink {
+    .colorBlock.plate-pink {
         background-color: pink;
+    }
+    .colorBlock.plate-eraser {
+        background-image: url('../public/images/earser.png');
+        background-size: 100% auto;
+    }
+    .colorBlock.plate-pig {
+        background-image: url('../public/images/pig.png');
+        background-size: 130% auto;
+        background-repeat: no-repeat;
     }
 </style>
 
@@ -44,8 +53,9 @@
     <div id="drawTable">
         <canvas id="myCanvas" width=500 height=500></canvas>
         <div id="colorTable">
-            <div class="colorBlock red"></div><div class="colorBlock green"></div>
-            <div class="colorBlock blue"></div><div class="colorBlock pink"></div>
+            <div class="colorBlock plate-eraser"></div><div class="colorBlock plate-pig"></div>
+            <div class="colorBlock plate-red"></div><div class="colorBlock plate-green"></div>
+            <div class="colorBlock plate-blue"></div><div class="colorBlock plate-pink"></div>
         </div>
     </div>
 
@@ -54,40 +64,60 @@
         var cnv = document.getElementById('myCanvas'),
             cnv_context = cnv.getContext('2d'),
             pig_img = new Image(),
+            check_mouse_status = 'eraser',
             check_mouse_down = 0,
             color_block = document.querySelectorAll('.colorBlock'),
-            drawBoard = function (){
-                cnv_context.drawImage(pig_img, 0, 0, cnv.width, cnv.height);
-                //cnv_context.clearRect(50, 50, 50, 50);
+            drawBoard = function (x, y){
+                console.log('***%o  / %o', x, y);
+                cnv_context.drawImage(pig_img, x, y, cnv.width, cnv.height);
             },
             clearImg = function(x, y) {
-                var clear_size = 100;
-                x = x - (clear_size/2);
-                y = y - (clear_size/2);
-                cnv_context.clearRect(x, y, clear_size, clear_size);
+                var clear_size = 30;
+
+                if (check_mouse_down) {
+                    if (check_mouse_status === 'eraser') {
+                        x = x - (clear_size/2);
+                        y = y - (clear_size/2);
+
+                        console.log('%o / %o', x, y)
+                        cnv_context.clearRect(x, y, clear_size, clear_size);
+                    } else if (check_mouse_status === 'pig') {
+                        drawBoard(x, y);
+                    } else {
+                        cnv_context.beginPath()
+                        cnv_context.arc(x, y, 10, 0, 2 * Math.PI, false);
+                        cnv_context.fillStyle = check_mouse_status;
+                        cnv_context.fill();
+                    }
+                }
             };
             pig_img.src = "../public/images/pig.png";            
 
             //mouse status
             cnv.addEventListener('mousedown', function(e){
                 check_mouse_down = 1
+                clearImg(e.clientX, e.clientY);
             }, false);
             cnv.addEventListener('mousemove', function(e){
-                if (check_mouse_down) {
-                    console.log('%o / %o', e.clientX, e.clientY)
-                    clearImg(e.clientX, e.clientY);
-                }
+                clearImg(e.clientX, e.clientY);
+
             }, false);
             document.querySelector('body').addEventListener('mouseup', function(e){
                 check_mouse_down = 0;
             }, false);
 
 
-            color_block.addEventListener('click', function(){
-                
-            }, false);
+            for (var i=0; i < color_block.length; i++) {
+                color_block[i].addEventListener('click', function () {
+                    select_class = (this.attributes.class.value) ? (this.attributes.class.value) : '';
+
+                    check_mouse_status = select_class.replace(/.*plate-/, '');
+                    console.log(check_mouse_status);
+                }, false);
+            }
+
+            pig_img.addEventListener('load', drawBoard.bind(null, 0, 0), false);
             
-            pig_img.addEventListener('load', drawBoard,false);
     </script>
     
 
