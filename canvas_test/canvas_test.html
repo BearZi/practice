@@ -1,0 +1,125 @@
+<!doctype html>
+<html>
+<style type="text/css">
+    #drawTable {
+        position: absolute;
+        top: 0;
+        left: 0;        
+    }
+    #myCanvas{
+        position: relative;
+        border: 1px solid #c3c3c3;
+        background: url('../public/images/BG.png');
+    }
+    #myCanvas:hover {
+        cursor:pointer;
+    }
+    #colorTable {
+        display: inline-block;
+        width: 100px;
+        height: 500px;
+        border: solid 1px #ccc;
+        vertical-align: top;
+    }
+    .colorBlock {
+        width: 50px;
+        height: 50px;
+        display: inline-block;
+    }
+    .colorBlock.plate-red {
+        background-color: red;
+    }
+    .colorBlock.plate-green {
+        background-color: green;
+    }
+    .colorBlock.plate-blue {
+        background-color: blue;
+    }
+    .colorBlock.plate-pink {
+        background-color: pink;
+    }
+    .colorBlock.plate-eraser {
+        background-image: url('../public/images/earser.png');
+        background-size: 100% auto;
+    }
+    .colorBlock.plate-pig {
+        background-image: url('../public/images/pig.png');
+        background-size: 130% auto;
+        background-repeat: no-repeat;
+    }
+</style>
+
+<body>
+    <div id="drawTable">
+        <canvas id="myCanvas" width=500 height=500></canvas>
+        <div id="colorTable">
+            <div class="colorBlock plate-eraser"></div><div class="colorBlock plate-pig"></div>
+            <div class="colorBlock plate-red"></div><div class="colorBlock plate-green"></div>
+            <div class="colorBlock plate-blue"></div><div class="colorBlock plate-pink"></div>
+        </div>
+    </div>
+
+
+    <script type="text/javascript">
+        var cnv = document.getElementById('myCanvas'),
+            cnv_context = cnv.getContext('2d'),
+            pig_img = new Image(),
+            check_mouse_status = 'eraser',
+            check_mouse_down = 0,
+            color_block = document.querySelectorAll('.colorBlock'),
+            drawBoard = function (x, y){
+                console.log('***%o  / %o', x, y);
+                cnv_context.drawImage(pig_img, x, y, cnv.width, cnv.height);
+            },
+            clearImg = function(x, y) {
+                var clear_size = 30;
+
+                if (check_mouse_down) {
+                    if (check_mouse_status === 'eraser') {
+                        x = x - (clear_size/2);
+                        y = y - (clear_size/2);
+
+                        console.log('%o / %o', x, y)
+                        cnv_context.clearRect(x, y, clear_size, clear_size);
+                    } else if (check_mouse_status === 'pig') {
+                        drawBoard(x, y);
+                    } else {
+                        cnv_context.beginPath()
+                        cnv_context.arc(x, y, 10, 0, 2 * Math.PI, false);
+                        cnv_context.fillStyle = check_mouse_status;
+                        cnv_context.fill();
+                    }
+                }
+            };
+            pig_img.src = "../public/images/pig.png";            
+
+            //mouse status
+            cnv.addEventListener('mousedown', function(e){
+                check_mouse_down = 1
+                clearImg(e.clientX, e.clientY);
+            }, false);
+            cnv.addEventListener('mousemove', function(e){
+                clearImg(e.clientX, e.clientY);
+
+            }, false);
+            document.querySelector('body').addEventListener('mouseup', function(e){
+                check_mouse_down = 0;
+            }, false);
+
+
+            for (var i=0; i < color_block.length; i++) {
+                color_block[i].addEventListener('click', function () {
+                    select_class = (this.attributes.class.value) ? (this.attributes.class.value) : '';
+
+                    check_mouse_status = select_class.replace(/.*plate-/, '');
+                    console.log(check_mouse_status);
+                }, false);
+            }
+
+            pig_img.addEventListener('load', drawBoard.bind(null, 0, 0), false);
+            
+    </script>
+    
+
+</body>
+</html>
