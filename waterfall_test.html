@@ -3,6 +3,7 @@
 <style type="text/css">
 	ul {
 		list-style: none;
+		position: relative;
 	}
 	li {
 		display: block;
@@ -32,10 +33,23 @@
 		all_li = document.querySelectorAll('li'),
 		img_leng = all_img.length,
 		check_img_load = 0,
+		block_width,
 		PosImg = function(){
 			for (var i=0; i < img_leng; i++) {
-				all_li[i].style.cssText = 'width:33.33%';
+				all_li[i].style.cssText = 'width:30%';
 				
+				if (!i) {
+					all_li[i].style.top = 0;
+					all_li[i].style.left= 0;
+					block_width = all_li[i].offsetWidth;
+				} else if (i%3 > 0) {
+					all_li[i].style.top = 0;
+					all_li[i].style.left = 0;
+				} else {
+					all_li[i].style.left = 0;
+				}
+
+
 			}
 		};
 
