@@ -34,23 +34,33 @@
 		img_leng = all_img.length,
 		check_img_load = 0,
 		block_width,
+		record,
 		PosImg = function(){
 			for (var i=0; i < img_leng; i++) {
 				all_li[i].style.cssText = 'width:30%';
-				
+				//all_li[i].style.width = '30%';
+
+
 				if (!i) {
 					all_li[i].style.top = 0;
 					all_li[i].style.left= 0;
 					block_width = all_li[i].offsetWidth;
+					record = Math.floor(i/3);
 				} else if (i%3 > 0) {
-					all_li[i].style.top = 0;
-					all_li[i].style.left = 0;
+					if (record) {
+						record = Math.floor(i/3);
+					} else if (record == Math.floor(i/3)) {
+						all_li[i].style.top = 0;
+						all_li[i].style.left = ((block_width + 20)*(i%3)) + 'px';
+						console.log(((block_width + 20)*(i%3)));
+					}
 				} else {
+					record = '';
 					all_li[i].style.left = 0;
 				}
 
-
 			}
+			console.log(block_width);
 		};
 
 	for (var i=0; i < img_leng; i++) {
@@ -60,6 +70,7 @@
 				console.log('img loaded complete!!');
 
 				PosImg();
+				window.addEventListener('resize', PosImg, false);
 			}
 		}, false);
 	}
