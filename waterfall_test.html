@@ -10,7 +10,7 @@
 		position: absolute;
 	}
 	li img {
-		width: 100%;
+		width: 100%;display:block;
 	}
 </style>
 
@@ -20,9 +20,12 @@
 	<ul>
 		<li><img src="./public/images/1.jpg"/></li>
 		<li><img src="./public/images/2.jpg"/></li>
+		<li><img src="./public/images/7.jpg"/></li>
 		<li><img src="./public/images/3.jpg"/></li>
+		<li><img src="./public/images/6.jpg"/></li>
 		<li><img src="./public/images/4.jpg"/></li>
 		<li><img src="./public/images/5.jpg"/></li>
+		<li><img src="./public/images/2.jpg"/></li>
 		<li><img src="./public/images/6.jpg"/></li>
 		<li><img src="./public/images/7.jpg"/></li>
 	</ul>
@@ -35,30 +38,40 @@
 		check_img_load = 0,
 		block_width,
 		record,
+		prev_height,
+		prev_pos_top,
 		PosImg = function(){
 			for (var i=0; i < img_leng; i++) {
 				all_li[i].style.cssText = 'width:30%';
 				//all_li[i].style.width = '30%';
 
-
 				if (!i) {
 					all_li[i].style.top = 0;
 					all_li[i].style.left= 0;
 					block_width = all_li[i].offsetWidth;
-					record = Math.floor(i/3);
 				} else if (i%3 > 0) {
-					if (record) {
-						record = Math.floor(i/3);
-					} else if (record == Math.floor(i/3)) {
-						all_li[i].style.top = 0;
+					if (record == Math.floor(i/3)) {
+						if (!record) {
+							all_li[i].style.top = 0;
+						} else {
+							prev_height = all_li[i-3].offsetHeight;
+							prev_pos_top = all_li[i-3].offsetTop;
+
+							all_li[i].style.top = (prev_height + prev_pos_top +20) + 'px';
+						}
 						all_li[i].style.left = ((block_width + 20)*(i%3)) + 'px';
-						console.log(((block_width + 20)*(i%3)));
+
 					}
 				} else {
-					record = '';
 					all_li[i].style.left = 0;
-				}
 
+					prev_height = all_li[i-3].offsetHeight;
+					prev_pos_top = all_li[i-3].offsetTop;
+
+					all_li[i].style.top = (prev_height + prev_pos_top +20) + 'px';
+
+				}
+				record = Math.floor(i/3);
 			}
 			console.log(block_width);
 		};
