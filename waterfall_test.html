@@ -8,9 +8,11 @@
 	li {
 		display: block;
 		position: absolute;
+		transition: left 0.7s;
 	}
 	li img {
-		width: 100%;display:block;
+		width: 100%;
+		display: block;
 	}
 </style>
 
@@ -36,42 +38,46 @@
 		all_li = document.querySelectorAll('li'),
 		img_leng = all_img.length,
 		check_img_load = 0,
-		block_width,
+		block_width = 200,
 		record,
 		prev_height,
 		prev_pos_top,
+		one_line_count,
+		window_width,
+		interval = 10,
 		PosImg = function(){
+			window_width = document.documentElement.clientWidth;
+			one_line_count = Math.floor(window_width/block_width);
+
 			for (var i=0; i < img_leng; i++) {
-				all_li[i].style.cssText = 'width:30%';
-				//all_li[i].style.width = '30%';
+				//all_li[i].style.cssText = 'width:30%';
+				all_li[i].style.width = block_width + 'px';
 
 				if (!i) {
 					all_li[i].style.top = 0;
 					all_li[i].style.left= 0;
 					block_width = all_li[i].offsetWidth;
-				} else if (i%3 > 0) {
-					if (record == Math.floor(i/3)) {
+				} else if (i%one_line_count > 0) {
+					if (record == Math.floor(i/one_line_count)) {
 						if (!record) {
 							all_li[i].style.top = 0;
 						} else {
-							prev_height = all_li[i-3].offsetHeight;
-							prev_pos_top = all_li[i-3].offsetTop;
+							prev_height = all_li[i-one_line_count].offsetHeight;
+							prev_pos_top = all_li[i-one_line_count].offsetTop;
 
-							all_li[i].style.top = (prev_height + prev_pos_top +20) + 'px';
+							all_li[i].style.top = (prev_height + prev_pos_top +interval) + 'px';
 						}
-						all_li[i].style.left = ((block_width + 20)*(i%3)) + 'px';
-
+						all_li[i].style.left = ((block_width + interval)*(i%one_line_count)) + 'px';
 					}
 				} else {
 					all_li[i].style.left = 0;
 
-					prev_height = all_li[i-3].offsetHeight;
-					prev_pos_top = all_li[i-3].offsetTop;
+					prev_height = all_li[i-one_line_count].offsetHeight;
+					prev_pos_top = all_li[i-one_line_count].offsetTop;
 
-					all_li[i].style.top = (prev_height + prev_pos_top +20) + 'px';
-
+					all_li[i].style.top = (prev_height + prev_pos_top +interval) + 'px';
 				}
-				record = Math.floor(i/3);
+				record = Math.floor(i/one_line_count);
 			}
 			console.log(block_width);
 		};
