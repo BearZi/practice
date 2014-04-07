@@ -34,71 +34,87 @@
 
 
 <script type="text/javascript">
-	var all_img = document.querySelectorAll('li > img'),
-		all_li = document.querySelectorAll('li'),
-		img_leng = all_img.length,
-		check_img_load = 0,
-		block_width = 200,
-		record,
-		prev_height,
-		prev_pos_top,
-		one_line_count,
-		window_width,
-		interval = 10,
-		PosImg = function(){
-			window_width = document.documentElement.clientWidth;
-			one_line_count = Math.floor(window_width/block_width);
+	var zizi = (function(){
+		var all_img,
+			all_li,
+			img_leng,
+			check_img_load = 0,
+			block_width,
+			interval,
+			record,
+			prev_height,
+			prev_pos_top,
+			one_line_count,
+			window_width,
+			PosImg = function(){
+				window_width = document.documentElement.clientWidth;
+				one_line_count = Math.floor(window_width/block_width);
 
-			for (var i=0; i < img_leng; i++) {
-				//all_li[i].style.cssText = 'width:30%';
-				all_li[i].style.width = block_width + 'px';
+				for (var i=0; i < img_leng; i++) {
+					//all_li[i].style.cssText = 'width:30%';
+					all_li[i].style.width = block_width + 'px';
 
-				if (!i) {
-					all_li[i].style.top = 0;
-					all_li[i].style.left= 0;
-					block_width = all_li[i].offsetWidth;
-				} else if (i%one_line_count > 0) {
-					if (record == Math.floor(i/one_line_count)) {
-						if (!record) {
-							all_li[i].style.top = 0;
-						} else {
-							prev_height = all_li[i-one_line_count].offsetHeight;
-							prev_pos_top = all_li[i-one_line_count].offsetTop;
+					if (!i) {
+						all_li[i].style.top = 0;
+						all_li[i].style.left= 0;
+						block_width = all_li[i].offsetWidth;
+					} else if (i%one_line_count > 0) {
+						if (record == Math.floor(i/one_line_count)) {
+							if (!record) {
+								all_li[i].style.top = 0;
+							} else {
+								prev_height = all_li[i-one_line_count].offsetHeight;
+								prev_pos_top = all_li[i-one_line_count].offsetTop;
 
-							all_li[i].style.top = (prev_height + prev_pos_top +interval) + 'px';
+								all_li[i].style.top = (prev_height + prev_pos_top +interval) + 'px';
+							}
+							all_li[i].style.left = ((block_width + interval)*(i%one_line_count)) + 'px';
 						}
-						all_li[i].style.left = ((block_width + interval)*(i%one_line_count)) + 'px';
+					} else {
+						all_li[i].style.left = 0;
+
+						prev_height = all_li[i-one_line_count].offsetHeight;
+						prev_pos_top = all_li[i-one_line_count].offsetTop;
+
+						all_li[i].style.top = (prev_height + prev_pos_top +interval) + 'px';
 					}
-				} else {
-					all_li[i].style.left = 0;
-
-					prev_height = all_li[i-one_line_count].offsetHeight;
-					prev_pos_top = all_li[i-one_line_count].offsetTop;
-
-					all_li[i].style.top = (prev_height + prev_pos_top +interval) + 'px';
+					record = Math.floor(i/one_line_count);
 				}
-				record = Math.floor(i/one_line_count);
+				console.log(block_width);
+			},
+			init = function(obj) {
+				all_li = document.querySelectorAll(obj.selector);
+				all_img = document.querySelectorAll(obj.selector + ' img');
+				img_leng = all_img.length;
+				block_width = (obj && obj.block_width) ? obj.block_width : 300;
+				interval = (obj && obj.interval) ? obj.interval : 5;
+
+				// check the all imgs are loaded
+				for (var i=0; i < img_leng; i++) {
+					//console.log(all_img[i].complete)
+					all_img[i].addEventListener('load', function (){
+						check_img_load++;
+						console.log('%o = %o', check_img_load,this)
+						if (check_img_load === img_leng) {
+							console.log('img loaded complete!!');
+
+							PosImg();
+							window.addEventListener('resize', PosImg, false);
+						}
+					}, false);
+				}
 			}
-			console.log(block_width);
-		};
 
-	for (var i=0; i < img_leng; i++) {
-		all_img[i].addEventListener('load', function (){
-			check_img_load++;
-			if (check_img_load === img_leng) {
-				console.log('img loaded complete!!');
+		return {init: init}
+	})()
 
-				PosImg();
-				window.addEventListener('resize', PosImg, false);
-			}
-		}, false);
-	}
-
+	zizi.init({
+		selector: 'li', // select each item
+		block_width: 200, //unit is 'px'
+		interval: 10
+	});
 
 </script>
 
 </body>
 </html>
-
-
-
