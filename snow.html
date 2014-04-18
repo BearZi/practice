@@ -1,0 +1,73 @@
+﻿<html>
+<style>
+    body { overflow: hidden;}
+    img { height: 35px; position: absolute; }
+</style>
+<body>
+</body>
+<script>
+    (function () {
+        self.set = {
+            img : './public/images/snow.png',
+            count : 30,
+            speed : 10,
+            items : [{
+                full_down_loop : '',
+                pos_h : 0,
+                pos_w : 500,
+                angle : 91,
+                move : Math.random()
+                }]
+        };
+        var full_down_loop,
+            snow_obj
+            _time = 1,
+            body_height = document.body.clientHeight,
+            body_width = document.body.clientWidth;
+        function setBodySize () {
+            body_height = document.documentElement.clientHeight
+            body_width = document.documentElement.clientWidth
+            console.log('%o / %o', body_height, body_width)
+        }
+        function fullDown () {
+            //set.items[i].move = Math.random()
+            for (var i=0; i < set.count; i++) {
+                snow_obj = document.getElementById('snow_' + i);
+                snow_obj.style.top = (set.items[i].pos_h+=set.items[i].move) + 'px'
+                if ( (set.items[i].pos_h%set.items[i].angle) > set.items[i].angle/2) {
+                    snow_obj.style.left = (set.items[i].pos_w-=set.items[i].move) + 'px'                
+                } else if ( set.items[i].pos_w > -1) {
+                    snow_obj.style.left = (set.items[i].pos_w+=set.items[i].move) + 'px'
+                }
+
+                clearTimeout(set.items[i].full_down_loop)
+                //console.log('time = %o / %o',_time++, set.items[i].pos_h%set.items[i].angle)
+                if (set.items[i].pos_h < body_height) {
+                    //set.items[i].full_down_loop = setTimeout(fullDown, set.speed);
+                } else {
+                    set.items[i].pos_h = 0
+                    //set.items[i].full_down_loop = setTimeout(fullDown, set.speed);
+                }
+            }
+            full_down_loop = setTimeout(fullDown, set.speed);
+        }
+
+
+        for (var i = 0; i < set.count; i++) {
+            document.write('<img src="'+ set.img +'" id ="snow_'+ i +'">')
+            set.items[i] = {
+                pos_h : Math.floor(Math.random()*body_height),
+                pos_w : Math.floor(Math.random()*body_width),
+                angle : Math.floor(Math.random()*100)+1,
+                move : Math.random()
+                }
+            //set.items[i].full_down_loop = setTimeout(fullDown, set.speed);
+        }
+        full_down_loop = setTimeout(fullDown, set.speed);
+
+        window.addEventListener('resize', setBodySize, false)
+    }())
+
+</script>
+
+</html>
