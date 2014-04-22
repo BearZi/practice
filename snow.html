@@ -34,13 +34,14 @@
             for (var i=0; i < set.count; i++) {
                 snow_obj = document.getElementById('snow_' + i);
                 snow_obj.style.top = (set.items[i].pos_h+=set.items[i].move) + 'px'
+                
                 if ( (set.items[i].pos_h%set.items[i].angle) > set.items[i].angle/2) {
                     snow_obj.style.left = (set.items[i].pos_w-=set.items[i].move) + 'px'                
-                } else if ( set.items[i].pos_w > -1) {
+                } else if ( 1 || set.items[i].pos_w > -1) {
                     snow_obj.style.left = (set.items[i].pos_w+=set.items[i].move) + 'px'
                 }
 
-                clearTimeout(set.items[i].full_down_loop)
+                //clearTimeout(set.items[i].full_down_loop)
                 //console.log('time = %o / %o',_time++, set.items[i].pos_h%set.items[i].angle)
                 if (set.items[i].pos_h < body_height) {
                     //set.items[i].full_down_loop = setTimeout(fullDown, set.speed);
@@ -49,11 +50,12 @@
                     //set.items[i].full_down_loop = setTimeout(fullDown, set.speed);
                 }
             }
-            full_down_loop = setTimeout(fullDown, set.speed);
+            clearTimeout(full_down_loop)
+            full_down_loop = setTimeout(fullDown, set.speed);            
         }
 
-
         for (var i = 0; i < set.count; i++) {
+            set.img = './public/images/candy_0' + Math.floor(Math.random()*(4-1)+1) + '.png'
             document.write('<img src="'+ set.img +'" id ="snow_'+ i +'">')
             set.items[i] = {
                 pos_h : Math.floor(Math.random()*body_height),
