@@ -6,6 +6,7 @@
 <body>
 </body>
 <script>
+/*
     (function () {
         self.set = {
             img : './public/images/snow.png',
@@ -69,6 +70,103 @@
 
         window.addEventListener('resize', setBodySize, false)
     }())
+*/
+
+
+
+    var Snow = (function (){
+        function Snow (set) {
+            _this = this
+            _this.name = set.name
+            _this.img = set.img
+            _this.count = set.count
+            _this.speed = set.speed
+            _this.items = set.items
+            _this.body_height = document.body.clientHeight
+            _this.body_width = document.body.clientWidth
+
+        }
+        Snow.setBodySize = function () {
+            _this.body_height = document.documentElement.clientHeight
+            _this.body_width = document.documentElement.clientWidth
+            console.log('%o / %o', _this.body_height, _this.body_width)
+        }
+        Snow.prototype.init = function () {
+            for (var i = 0; i < _this.count; i++) {
+                document.write('<img src="'+ _this.img +'" id ="' + _this.name + '_'+ i +'">')
+                _this.items[i] = {
+                    pos_h : Math.floor(Math.random()*_this.body_height),
+                    pos_w : Math.floor(Math.random()*_this.body_width),
+                    angle : Math.floor(Math.random()*100)+1,
+                    move : Math.random()
+                    }
+            }
+            full_down_loop = setTimeout(_this.fullDown, _this.speed);
+        }
+
+        Snow.prototype.fullDown = function () {
+            for (var i=0; i < _this.count; i++) {
+                snow_obj = document.getElementById( _this.name + '_' + i);
+                snow_obj.style.top = (_this.items[i].pos_h+=_this.items[i].move) + 'px'
+                
+                if ( (_this.items[i].pos_h%_this.items[i].angle) > _this.items[i].angle/2) {
+                    snow_obj.style.left = (_this.items[i].pos_w-=_this.items[i].move) + 'px'                
+                } else if ( 1 || set.items[i].pos_w > -1) {
+                    snow_obj.style.left = (_this.items[i].pos_w+=_this.items[i].move) + 'px'
+                }
+
+                if (_this.items[i].pos_h > _this.body_height) {
+                    _this.items[i].pos_h = 0
+                } 
+            }
+            clearTimeout(full_down_loop)
+            full_down_loop = setTimeout(_this.fullDown, _this.speed);
+        }
+
+        return Snow
+    })()
+
+    !(function(){
+        obj_1 = {
+            name : 'candy',
+            img : './public/images/snow.png',
+            count : 10,
+            speed : 10,
+            items : [{
+                full_down_loop : '',
+                pos_h : 0,
+                pos_w : 500,
+                angle : 91,
+                move : Math.random()
+                }]
+        };
+        obj_2 = {
+            name : 'candy2',
+            img : './public/images/candy_01.png',
+            count : 10,
+            speed : 10,
+            items : [{
+                full_down_loop : '',
+                pos_h : 0,
+                pos_w : 500,
+                angle : 30,
+                move : Math.random()
+                }]
+        };
+
+        var Candy = new Snow(obj_1)
+        //var Candy2 = new Snow(obj_2)
+
+        console.log(Candy)
+        //console.log(Candy2)
+
+        Snow.setBodySize()
+        Candy.init()
+        //Candy2.init()
+
+        window.addEventListener('resize', Snow.setBodySize, false)
+
+    })()
 
 </script>
 
