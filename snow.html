@@ -6,121 +6,82 @@
 <body>
 </body>
 <script>
-/*
-    (function () {
-        self.set = {
-            img : './public/images/snow.png',
-            count : 30,
-            speed : 10,
-            items : [{
-                full_down_loop : '',
-                pos_h : 0,
-                pos_w : 500,
-                angle : 91,
-                move : Math.random()
-                }]
-        };
-        var full_down_loop,
-            snow_obj
-            _time = 1,
-            body_height = document.body.clientHeight,
-            body_width = document.body.clientWidth;
-        function setBodySize () {
-            body_height = document.documentElement.clientHeight
-            body_width = document.documentElement.clientWidth
-            console.log('%o / %o', body_height, body_width)
-        }
-        function fullDown () {
-            //set.items[i].move = Math.random()
-            for (var i=0; i < set.count; i++) {
-                snow_obj = document.getElementById('snow_' + i);
-                snow_obj.style.top = (set.items[i].pos_h+=set.items[i].move) + 'px'
-                
-                if ( (set.items[i].pos_h%set.items[i].angle) > set.items[i].angle/2) {
-                    snow_obj.style.left = (set.items[i].pos_w-=set.items[i].move) + 'px'                
-                } else if ( 1 || set.items[i].pos_w > -1) {
-                    snow_obj.style.left = (set.items[i].pos_w+=set.items[i].move) + 'px'
-                }
-
-                //clearTimeout(set.items[i].full_down_loop)
-                //console.log('time = %o / %o',_time++, set.items[i].pos_h%set.items[i].angle)
-                if (set.items[i].pos_h < body_height) {
-                    //set.items[i].full_down_loop = setTimeout(fullDown, set.speed);
-                } else {
-                    set.items[i].pos_h = 0
-                    //set.items[i].full_down_loop = setTimeout(fullDown, set.speed);
-                }
+    var Snow = (function (){
+        /*
+        var extend = function(){
+            var obj = {
+                name : 'candy',
+                img : './public/images/snow.png',
+                count : 5,
+                speed : 5,
+                items : [{
+                    full_down_loop : '',
+                    pos_h : 0,
+                    pos_w : 500,
+                    angle : 30,
+                    move : Math.random()
+                    }]
             }
-            clearTimeout(full_down_loop)
-            full_down_loop = setTimeout(fullDown, set.speed);            
-        }
 
-        for (var i = 0; i < set.count; i++) {
-            set.img = './public/images/candy_0' + Math.floor(Math.random()*(4-1)+1) + '.png'
-            document.write('<img src="'+ set.img +'" id ="snow_'+ i +'">')
-            set.items[i] = {
-                pos_h : Math.floor(Math.random()*body_height),
-                pos_w : Math.floor(Math.random()*body_width),
-                angle : Math.floor(Math.random()*100)+1,
-                move : Math.random()
-                }
-            //set.items[i].full_down_loop = setTimeout(fullDown, set.speed);
         }
-        full_down_loop = setTimeout(fullDown, set.speed);
-
-        window.addEventListener('resize', setBodySize, false)
-    }())
 */
 
+         window.addEventListener('resize', function () {
+            this.body_height = document.documentElement.clientHeight
+            this.body_width = document.documentElement.clientWidth
+            console.log('%o / %o', this.body_height, this.body_width)
+        }, false)
 
-
-    var Snow = (function (){
         function Snow (set) {
-            _this = this
-            _this.name = set.name
-            _this.img = set.img
-            _this.count = set.count
-            _this.speed = set.speed
-            _this.items = set.items
-            _this.body_height = document.body.clientHeight
-            _this.body_width = document.body.clientWidth
+            this.name = set.name || 'name'
+            this.img = set.img || ''
+            this.count = set.count || 10
+            this.speed = set.speed || 500
+            this.items = set.items 
+            this.body_height = document.body.clientHeight
+            this.body_width = document.body.clientWidth
 
-        }
-        Snow.setBodySize = function () {
-            _this.body_height = document.documentElement.clientHeight
-            _this.body_width = document.documentElement.clientWidth
-            console.log('%o / %o', _this.body_height, _this.body_width)
-        }
-        Snow.prototype.init = function () {
-            for (var i = 0; i < _this.count; i++) {
-                document.write('<img src="'+ _this.img +'" id ="' + _this.name + '_'+ i +'">')
-                _this.items[i] = {
-                    pos_h : Math.floor(Math.random()*_this.body_height),
-                    pos_w : Math.floor(Math.random()*_this.body_width),
+            this.full_down_loop = 0
+
+            var This = this
+            for (var i = 0; i < This.count; i++) {
+                document.write('<img src="'+ this.img +'" id ="' + this.name + '_'+ i +'">')                
+                this.items[i] = {
+                    pos_h : Math.floor(Math.random()*this.body_height),
+                    pos_w : Math.floor(Math.random()*this.body_width),
                     angle : Math.floor(Math.random()*100)+1,
                     move : Math.random()
                     }
             }
-            full_down_loop = setTimeout(_this.fullDown, _this.speed);
+            fullDown(This)
+        }
+        
+        Snow.prototype.stop = function(){
+            clearTimeout(this.full_down_loop)
         }
 
-        Snow.prototype.fullDown = function () {
-            for (var i=0; i < _this.count; i++) {
-                snow_obj = document.getElementById( _this.name + '_' + i);
-                snow_obj.style.top = (_this.items[i].pos_h+=_this.items[i].move) + 'px'
+        Snow.prototype.fadeOut = function(){
+
+
+        }
+        function fullDown (This) {
+            
+            for (var i=0; i < This.count; i++) {
+                snow_obj = document.getElementById( This.name + '_' + i);
+                snow_obj.style.top = (This.items[i].pos_h+=This.items[i].move) + 'px'
                 
-                if ( (_this.items[i].pos_h%_this.items[i].angle) > _this.items[i].angle/2) {
-                    snow_obj.style.left = (_this.items[i].pos_w-=_this.items[i].move) + 'px'                
+                if ( (This.items[i].pos_h%This.items[i].angle) > This.items[i].angle/2) {
+                    snow_obj.style.left = (This.items[i].pos_w-=This.items[i].move) + 'px'                
                 } else if ( 1 || set.items[i].pos_w > -1) {
-                    snow_obj.style.left = (_this.items[i].pos_w+=_this.items[i].move) + 'px'
+                    snow_obj.style.left = (This.items[i].pos_w+=This.items[i].move) + 'px'
                 }
 
-                if (_this.items[i].pos_h > _this.body_height) {
-                    _this.items[i].pos_h = 0
+                if (This.items[i].pos_h > This.body_height) {
+                    This.items[i].pos_h = 0
                 } 
             }
-            clearTimeout(full_down_loop)
-            full_down_loop = setTimeout(_this.fullDown, _this.speed);
+            //clearTimeout(This.full_down_loop)
+            This.full_down_loop = setTimeout(function () { fullDown(This) }, This.speed);
         }
 
         return Snow
@@ -130,7 +91,7 @@
         obj_1 = {
             name : 'candy',
             img : './public/images/snow.png',
-            count : 10,
+            count : 2,
             speed : 10,
             items : [{
                 full_down_loop : '',
@@ -143,8 +104,21 @@
         obj_2 = {
             name : 'candy2',
             img : './public/images/candy_01.png',
-            count : 10,
+            count : 3,
             speed : 10,
+            items : [{
+                full_down_loop : '',
+                pos_h : 0,
+                pos_w : 500,
+                angle : 30,
+                move : Math.random()
+                }]
+        };
+        obj_3 = {
+            name : 'candy3',
+            img : './public/images/candy_02.png',
+            count : 5,
+            speed : 5,
             items : [{
                 full_down_loop : '',
                 pos_h : 0,
@@ -155,16 +129,15 @@
         };
 
         var Candy = new Snow(obj_1)
-        //var Candy2 = new Snow(obj_2)
+        var Candy2 = new Snow(obj_2)
+        var Candy3 = new Snow(obj_3)
 
-        console.log(Candy)
-        //console.log(Candy2)
+setTimeout(function(){
+    Candy3.stop()
+}, 5000)
+        console.log(Candy.name)
 
-        Snow.setBodySize()
-        Candy.init()
-        //Candy2.init()
-
-        window.addEventListener('resize', Snow.setBodySize, false)
+        
 
     })()
 
