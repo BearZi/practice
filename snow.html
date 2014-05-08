@@ -7,9 +7,26 @@
 </body>
 <script>
     var Snow = (function (){
-        /*
-        var extend = function(){
-            var obj = {
+        
+        var extend = function(org, change){
+            for (var i in change) {
+                // console.log(i)
+                org[i] = change[i]
+            }
+            return org
+        }
+
+
+         window.addEventListener('resize', function () {
+            this.body_height = document.documentElement.clientHeight
+            this.body_width = document.documentElement.clientWidth
+            console.log('%o / %o', this.body_height, this.body_width)
+        }, false)
+
+        function Snow (set) {
+            console.log(this)
+            
+            _this = extend({
                 name : 'candy',
                 img : './public/images/snow.png',
                 count : 5,
@@ -21,23 +38,17 @@
                     angle : 30,
                     move : Math.random()
                     }]
-            }
+            } ,set)
+            console.log(_this)
 
-        }
-*/
 
-         window.addEventListener('resize', function () {
-            this.body_height = document.documentElement.clientHeight
-            this.body_width = document.documentElement.clientWidth
-            console.log('%o / %o', this.body_height, this.body_width)
-        }, false)
+            this.name = _this.name
+            this.img = _this.img
+            this.count = _this.count
+            this.speed = _this.speed
+            this.items = _this.items 
 
-        function Snow (set) {
-            this.name = set.name || 'name'
-            this.img = set.img || ''
-            this.count = set.count || 10
-            this.speed = set.speed || 500
-            this.items = set.items 
+
             this.body_height = document.body.clientHeight
             this.body_width = document.body.clientWidth
 
@@ -105,36 +116,20 @@
             name : 'candy2',
             img : './public/images/candy_01.png',
             count : 3,
-            speed : 10,
-            items : [{
-                full_down_loop : '',
-                pos_h : 0,
-                pos_w : 500,
-                angle : 30,
-                move : Math.random()
-                }]
         };
         obj_3 = {
             name : 'candy3',
             img : './public/images/candy_02.png',
             count : 5,
-            speed : 5,
-            items : [{
-                full_down_loop : '',
-                pos_h : 0,
-                pos_w : 500,
-                angle : 30,
-                move : Math.random()
-                }]
         };
 
         var Candy = new Snow(obj_1)
         var Candy2 = new Snow(obj_2)
         var Candy3 = new Snow(obj_3)
 
-setTimeout(function(){
-    Candy3.stop()
-}, 5000)
+        setTimeout(function(){
+            Candy3.stop()
+        }, 5000)
         console.log(Candy.name)
 
         
