@@ -1,0 +1,227 @@
+﻿<html>
+<head>
+
+<style type="text/css">
+td {
+  text-align:right;
+  width:30px;
+};
+
+a:link,:visited,:hover,:active {
+	text-decoration: none;
+}
+</style>
+
+<script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+
+
+</head>
+
+<body>
+
+<div id="cal_inner_1" style="width:250px; text-align:center;"></div>
+<div id="cal_inner_2" style="width:250px; height:200px;"></div>
+
+
+<script>
+	var today=new Date();
+	var yy = today.getFullYear();
+	var mm = today.getMonth() + 1;
+	var dd = today.getDate();
+	var org_yy = yy;
+	var org_mm = mm;
+
+	Calendar(mm,yy);
+//	alert(yy + " \/ "+ mm);
+	
+	var i =1;
+/*
+for (i=1;i<=12;i++) {
+  Calendar(i,2012);
+};
+*/
+
+function Calendar(i,y){
+
+	var month = new Array(12);
+
+	month[1] = "JANUARY";
+	month[2] = "FEBRUARY";
+	month[3] = "MARCH";
+	month[4] = "APRIL";
+	month[5] = "MAY";
+	month[6] = "JUNE";
+	month[7] = "JULY";
+	month[8] = "AUGUST";
+	month[9] = "SEPTEMBER";
+	month[10] = "OCTOBER";
+	month[11] = "NOVEMBER";
+	month[12] = "DECEMBER";
+
+	var show = "<div><a href=javascript:ch_m(\'bef\'); style=\"text-decoration: none;\">\<\<</a>　" +y +" \/ " + month[i];
+	show += "　<a href=javascript:ch_m(\'aft\'); style=\"text-decoration: none;\">\>\></a>"
+  
+  
+//	document.write(show);
+	document.getElementById('cal_inner_1').innerHTML = show;
+
+	DAY(i,y);
+
+	$("tr").find("td:first").css('color','red')
+		.end()
+		.find("td:eq(6)").css('color','green');
+
+	//抓今天日期
+//	alert(org_mm+" "+i);
+	if (org_mm == i && org_yy == y){
+		$("td:contains("+dd+"):first").css('color','blue');
+	}
+};
+
+
+function DAY(i,y){
+
+	var MD = new Array(12);
+
+/************************************/
+/** 判斷是否為潤年               ****/
+/************************************/
+
+	var flag_lp = 0;
+
+	if ((y%400) == 0){
+		flag_lp = 1;
+	}else{
+		if ((y%100) != 0) {
+			if (y%4==0){
+				flag_lp = 1; 
+			};
+		};
+	};
+
+
+/***********************************/
+/** 閏月算法 400一年閏、4年一閏 ****/
+/***********************************/
+
+  if (i == 2) {
+
+    MD[2]=28;
+
+    if(flag_lp == 1){
+      MD[2]=29;
+    };
+
+  } else {
+
+    if (i<8){
+      if((i%2)==1){
+        MD[i]=31;
+      }else{
+        MD[i]=30;
+      };
+
+    }else{
+      if((i%2)==0){
+        MD[i]=31;
+      }else{
+        MD[i]=30;
+      };
+    };
+
+  }; 
+
+
+/***************************************************************/
+/** 星期的算法：                                            ****/
+/** Ｙ(year)：年份減2000                                    ****/
+/** Ｌ(leap days)：從2000年1月1日到該日之間的閏日數目       ****/
+/** Ｍ(month)：月份的代號，從一月到十二月分別是511462403513 ****/
+/** Ｄ(day)：日號                                           ****/
+/** Ｙ＋Ｌ＋Ｍ＋Ｄ（除7的餘數）                             ****/
+/***************************************************************/
+	
+	var m_t=new Array("",5,1,1,4,6,2,4,0,3,5,1,3);
+  
+	var count=1;
+	var w_ct =0;
+
+
+	var date = "<table id=inner><tr><td>Sun</td>";
+	var date = date +"<td>Mon</td>";
+	var date = date +"<td>Tue</td>";
+	var date = date +"<td>Wed</td>";
+	var date = date +"<td>Thu</td>";
+	var date = date +"<td>Fri</td>";
+	var date = date +"<td>Sat</td></tr>";
+	var date = date +"<tr>";
+
+
+	var years = Math.abs(y-2000);
+	var add_one_day =1;
+
+	for (count=1;count<=MD[i];count++){
+
+		if (count==1){
+			if (flag_lp ==1 && i < 3 ) {
+				if (i==2 && count == 29){
+					var add_one_day =1;
+				}else{
+					var add_one_day =0;
+				};
+			};
+//************** 算幾個2月29日
+			if (Math.floor((years%400)/100) > 0) {
+				var ch_100 = add_one_day- Math.floor((years%400)/100);
+			} else {
+				var ch_100 = add_one_day;
+			};
+			var lp_d = (Math.floor((years/400))*98+Math.floor(Math.ceil(years%400)/4))+ch_100;
+//************** _end
+
+			var week = (years + lp_d + m_t[i] + count)%7;
+//      	alert(week);
+		};
+	   
+		for(w_ct==0;w_ct < week ;w_ct++){
+			date += "<td> </td>";
+		};
+
+		date = date + "<td>" + count + "</td>"; 
+
+		if(((count+week)%7)==0){
+			date = date +"</tr><tr>";
+		};
+	};
+
+	date = date +"</tr></table></div><br><br>";
+//	document.write(date);
+	document.getElementById('cal_inner_2').innerHTML = date;
+
+};
+
+function ch_m(touch){
+
+	if (touch == "bef"){
+		mm = mm-1;
+		if (mm==0){
+			yy=yy-1;
+			mm=12;
+		};
+		Calendar(mm,yy);
+//		alert(yy+"/"+mm);
+	}else{
+		mm = mm+1;
+		if (mm==13){
+			yy=yy+1;
+			mm=1;
+		};
+		Calendar(mm,yy);
+//		alert(yy+"/"+mm);
+	};
+};
+
+</script>
+
+</body>
+</html>
