@@ -8,23 +8,25 @@
 <script>
     var Snow = (function (){
         
-        var extend = function(org, change){
-            for (var i in change) {
-                // console.log(i)
-                org[i] = change[i]
+        var extend = function(){
+            var len = arguments.length
+
+            for (var i=1; i< len; i++) {
+                for (var arg in arguments[i]) {
+                    arguments[0][arg] = arguments[i][arg]
+                }
             }
-            return org
+            return arguments[0]
         }
 
-
-         window.addEventListener('resize', function () {
+        window.addEventListener('resize', function () {
             this.body_height = document.documentElement.clientHeight
             this.body_width = document.documentElement.clientWidth
-            console.log('%o / %o', this.body_height, this.body_width)
+            // console.log('%o / %o', this.body_height, this.body_width)
         }, false)
 
         function Snow (set) {
-            console.log(this)
+            // console.log(this)
             
             _this = extend({
                 name : 'candy',
@@ -32,22 +34,19 @@
                 count : 5,
                 speed : 5,
                 items : [{
-                    full_down_loop : '',
                     pos_h : 0,
                     pos_w : 500,
                     angle : 30,
                     move : Math.random()
                     }]
             } ,set)
-            console.log(_this)
-
+            // console.log(_this)
 
             this.name = _this.name
             this.img = _this.img
             this.count = _this.count
             this.speed = _this.speed
             this.items = _this.items 
-
 
             this.body_height = document.body.clientHeight
             this.body_width = document.body.clientWidth
@@ -102,10 +101,8 @@
         obj_1 = {
             name : 'candy',
             img : './public/images/snow.png',
-            count : 2,
             speed : 10,
             items : [{
-                full_down_loop : '',
                 pos_h : 0,
                 pos_w : 500,
                 angle : 91,
@@ -115,12 +112,12 @@
         obj_2 = {
             name : 'candy2',
             img : './public/images/candy_01.png',
-            count : 3,
+            count : 10,
         };
         obj_3 = {
             name : 'candy3',
             img : './public/images/candy_02.png',
-            count : 5,
+            count : 2,
         };
 
         var Candy = new Snow(obj_1)
@@ -131,8 +128,6 @@
             Candy3.stop()
         }, 5000)
         console.log(Candy.name)
-
-        
 
     })()
 
