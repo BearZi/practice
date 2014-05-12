@@ -83,7 +83,8 @@
 					/** Ｙ＋Ｌ＋Ｍ＋Ｄ（除7的餘數）                             ****/
 					/***************************************************************/
 					// 400 年 98個閏年 + %400 剩下的天數/4 無條件進位 - %100年不算閏
-					count_leap_year = (Math.floor((this.year/400))*98 + Math.floor(Math.ceil(this.year%400)/4)) - Math.floor((this.year%400)/100) + 1
+					count_leap_year = (Math.floor((this.year/400))*98 + Math.floor(Math.ceil(this.year%400)/4)) - Math.floor((this.year%400)/100) 
+					count_leap_year += (leap_year && this.month <2) ? 0 : 1
 					which_week = ((this.year - 2000) + count_leap_year + check_week[this.month] + 1 )%7
 					print_cal = '<div class="tool"><div class="year">' + this.year + '</div><span class="left">&lt;</span><span class="month">' + month[this.month] +'</span><span class="right">&gt;</span></div>'
 						
