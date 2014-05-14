@@ -1,0 +1,136 @@
+<!doctype html>
+<html>
+<script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+<style type="text/css">
+    .swipe-wrap {
+        position: relative;
+    }
+    .swipe-img {
+        width: 500px;
+        list-style: none;
+        white-space: nowrap;
+        overflow: hidden;
+        padding: 0;
+        margin: 0;
+    }
+    .swipe-img li {
+        display: inline-block;
+        margin-left: -5px;
+    }
+    .swipe-img img {
+        width: 100%;
+        position: relative;
+    }
+    .swipe-btn {
+        position: absolute;
+        bottom: 0;
+        padding: 0 10px;
+    }
+    .swipe-btn ul {
+        list-style: none;
+    }
+    .swipe-btn li {
+        display: inline-block;
+        border-radius: 50%;
+        border: 1px solid #fff;
+        padding: 1px 7px;
+        background: rgba(0,10,122,0.3);
+        margin-left: 5px;
+    }
+    .swipe-btn li:hover {
+        background: rgba(0,10,122,0.8);
+    }
+</style>
+<script type="text/javascript">
+
+    $(function(){
+
+        var Slider = (function () {
+            var swipe_animate = function (This) {
+                    This.move = 502*This.index
+                    This.$swipe_img.animate({'left': ('-' + This.move +'px'), 'opacity': '0.5'}, 500)
+                        .animate({'opacity': '1'})
+                },
+                auto_slider = function (This) {
+                    console.log(This)
+                    if (This.flag) {
+                        This.index++
+                    } else {
+                        This.index--
+                    }
+                    // console.log('%o / %o', index, flag)
+                    if ( This.index > (This.total_count-2) && This.flag) {
+                        This.flag = 0
+                        This.index = This.total_count-1
+                    } else if (!This.index && !This.flag) {
+                        This.flag = 1
+                    } else if ( This.index < 0 ) {
+                        This.index = 0
+                    }
+                    swipe_animate(This)
+                    This.timeout = setTimeout(function (){auto_slider(This)} , 3000)
+                }
+
+            var Slider = function (id) {
+                    var print_btn = '',
+                        This = this
+
+                    This.timeout = 0
+                    This.flag = 1
+                    This.move = 0
+                    This.timeout = 0
+                    This.index = 0
+                    This.$this_block = $('#'+id)
+                    This.$swipe_img = This.$this_block.find('.swipe-img li img')
+                    This.total_count = This.$swipe_img.length
+
+                    print_btn += '<ul class="swipe-btn">'
+                    for (var i=0; i < This.total_count; i++) {
+                        print_btn += '<li>' + (i+1) + '</li>'
+                    }
+                    print_btn += '</ul>'
+                    This.$this_block.append(print_btn)
+
+                    This.$swipe_btn = This.$this_block.find('.swipe-btn')
+                    This.$swipe_btn_li = This.$this_block.find('.swipe-btn li')
+
+                    This.$swipe_btn_li.on('mouseover', function(){
+                        clearTimeout(This.timeout)
+
+                        var $this = $(this)
+                        This.index = $this.index()
+
+                        swipe_animate(This)
+                    })
+                    This.$swipe_btn.on('mouseleave', function(){
+                        auto_slider(This)
+                    })
+                    auto_slider(This)
+                }
+                return Slider
+        })()
+        var Slider = new Slider('test1')
+        var Slider2 = new Slider('test2')
+    })
+
+</script>
+
+<body>
+
+    <div id="test1" class="swipe-wrap">
+        <ul class="swipe-img">
+            <li><img src="./public/images/1.jpg"></li>
+            <li><img src="./public/images/2.jpg"></li>
+            <li><img src="./public/images/3.jpg"></li>
+        </ul>
+    </div>
+
+    <div id="test2" class="swipe-wrap">
+        <ul class="swipe-img">
+            <li><img src="./public/images/4.jpg"></li>
+            <li><img src="./public/images/5.jpg"></li>
+            <li><img src="./public/images/6.jpg"></li>
+        </ul>
+    </div>
+</body>
+</html>
