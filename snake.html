@@ -1,0 +1,250 @@
+﻿<html>
+<head>
+
+<style>
+
+table{
+	margin:0 auto;
+}
+#indiv table{
+	border:3px solid #000000;
+}
+#indiv td{
+	border:1px dotted #aaaaaa;
+	width:5px;
+	height:5px;
+	font-size:10px;
+}
+#ctrl td{
+	width:40px;
+	height:40px;
+}
+#ctrl button{
+	width:100%;
+	height:100%;
+}
+
+
+</style>
+
+<script>
+
+	var timer_is_on=0;
+	var food_count =0;
+	var food_flag =0;
+	var speed = 200;
+
+	function drawTable (row,col) {
+		var show = "<table id=\"tab1\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">";
+		
+		for (var i=0;i < row; i++ ) {
+			show += "<tr>";
+			for (var j=0;j< col; j++) {
+				show += "<td>　</td>";
+			} 
+			show += "</tr>";
+		}
+		show += "</table>";
+		document.getElementById('indiv').innerHTML = show;
+		
+		//print length
+		cells_length = document.getElementById('tab1').rows[0].cells.length;
+		rows_length = document.getElementById('tab1').rows.length;
+	
+		drawBox(snake_head.xMove,snake_head.yMove,"#5db0e2");
+		all_body();
+		
+		//alert(document.getElementById('tab1').rows[0].cells[0].style.backgroundColor);
+		
+	}
+	var willyC = 1;
+	
+	function drawBox (row,col,color) {
+		var objBox = document.getElementById('tab1').rows[row].cells[col];
+	
+		if (color == null){
+		/*	var len = snake_body.body.length / 2;
+			var c = 255 * (willyC / len);
+		
+			var color = 'rgb(255,' + c +',' + c +')';
+			willyC++;
+		*/
+			color = '#a2c0f7';
+		}
+		
+		/*if (color == null){
+			if (willyC%3==0)
+				color="#00ff00";
+			else if (willyC%3==1)
+				color="#0000ff";
+			else
+				color="#7eb24a";
+			willyC++;
+		}*/
+		objBox.style.backgroundColor = color;
+	}
+
+/*****************************************/
+	function snake(x,y){
+		this.xMove = x;
+		this.yMove = y;
+		this.body = new Array(x,y+1,x,y+2,x,y+3);
+	}
+	var snake_head = new snake(4,4);
+	var snake_body = new snake(snake_head.xMove,snake_head.yMove);
+	
+//	alert(snake_body.body[1]);
+//	alert(snake_body.body.length);
+	
+	function rand_pos(){
+		rand_val = Math.floor(Math.random()*cells_length);
+		return rand_val;
+	}
+	
+	var food_cc =1;
+	function food(){
+		snake_food = new snake(rand_pos(),rand_pos());
+		console.log ("zizi="+ food_cc +" food("+snake_food.xMove+","+snake_food.yMove+") ");
+
+		var tmp_color =document.getElementById('tab1').rows[snake_food.xMove].cells[snake_food.yMove].style.backgroundColor;
+		if (tmp_color == ""){
+			drawBox(snake_food.xMove,snake_food.yMove,"red");
+		}else{
+			food_cc++;
+			food();
+		}
+		food_cc++;
+	}
+	
+	
+	var count=1;
+	function ctrl_move(move,on_off){
+		drawBox(snake_head.xMove,snake_head.yMove,"transparent");
+		all_body("transparent");
+		
+		if(on_off == 1){
+			stopCount();
+		}
+
+		if (food_flag == 1){
+			var add_x =  snake_body.body[snake_body.body.length-2];
+			var add_y =  snake_body.body[snake_body.body.length-1];
+			snake_body.body.push(add_x);
+			snake_body.body.push(add_y);
+			//snake_body.body.length-1 snake_body.body.length-2
+			food_flag=0;
+		}
+		
+		move_body();
+		snake_body.body[0] =snake_head.xMove;
+		snake_body.body[1] =snake_head.yMove;
+		
+		if (move == "LEFT"&& snake_head.yMove > 0 ){
+			drawBox(snake_head.xMove,--snake_head.yMove,"#5db0e2");
+			all_body();
+			
+			t = setTimeout("ctrl_move('LEFT')", speed);
+		}else if(move == "RIGHT"&& snake_head.yMove < cells_length-1 ){
+			drawBox(snake_head.xMove,++snake_head.yMove,"#5db0e2");
+			all_body();
+			
+			t = setTimeout("ctrl_move('RIGHT')", speed);
+		}else if(move == "UP"&& snake_head.xMove >0){
+			drawBox(--snake_head.xMove,snake_head.yMove,"#5db0e2");
+			all_body();
+			
+			t = setTimeout("ctrl_move('UP')", speed);	
+		}else if(move == "DOWN"&& snake_head.xMove < rows_length-1){
+			drawBox(++snake_head.xMove,snake_head.yMove,"#5db0e2");
+			all_body();
+			
+			t = setTimeout("ctrl_move('DOWN')", speed);	
+		}else{
+			drawBox(snake_head.xMove,snake_head.yMove,"#5db0e2");
+			all_body();
+			
+			//alert("GAME OVER");
+			//timer_is_on=0;
+		}
+		
+		// if snake ate food ,created new food obj
+		if (snake_head.xMove==snake_food.xMove && snake_head.yMove==snake_food.yMove){
+			food();
+			food_count++;
+			food_flag =1;
+			document.getElementById('food_nu').value=food_count;
+
+			//stopCount(); // test if eat food
+		}
+		
+		//console.log("zizi:"+count+" ("+snake_head.xMove + ","+snake_head.yMove+")");
+		count++;
+	}
+	
+	function begin(){
+		if (timer_is_on == 0){
+			timer_is_on=1;
+			food();
+			ctrl_move("LEFT");
+		}
+	}
+	function stopCount(){
+		clearTimeout(t);
+		//timer_is_on=0;
+	}
+	
+	function all_body(body_color){
+		for(var i=0; i< snake_body.body.length ; i+=2){
+			var j = i+1;
+			drawBox(snake_body.body[i],snake_body.body[j],body_color);
+		}
+	}
+	
+	function move_body(){
+		for(var i=snake_body.body.length-1; i>=0 ; i-=2){
+			var j = i-1;
+			snake_body.body[i] =snake_body.body[i-2];
+			snake_body.body[j] =snake_body.body[j-2];
+		}	
+		/*
+		...
+		snake_body.body[4] =snake_body.body[2];
+		snake_body.body[5] =snake_body.body[3];
+		snake_body.body[2] =snake_body.body[0];
+		snake_body.body[3] =snake_body.body[1];
+		*/
+	}
+	
+
+	
+</script>
+
+
+</head>
+
+<body onload="drawTable(10,10)">
+
+<div id="indiv"></div><br />
+
+<span>food_count:</span><input type="text" id="food_nu" size="3" value="0" />
+
+<table id="ctrl">
+	<tr><td></td>
+		<td><button value="UP" onclick="ctrl_move(this.value,1)">↑</button></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td><button value="LEFT" onclick="ctrl_move(this.value,1)">←</button></td>
+		<td><button onclick="begin()">Begin</button></td>
+		<td><button value="RIGHT" onclick="ctrl_move(this.value,1)">→</button></td>
+	</tr>
+	<tr>
+		<td></td>
+		<td><button value="DOWN" onclick="ctrl_move(this.value,1)">↓</button></td>
+		<td></td>
+	</tr>
+</table>
+
+
+</body>
+</html>

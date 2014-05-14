@@ -1,0 +1,358 @@
+﻿<html>
+<head>
+<style>
+	body { background-color:#000000; }
+	#GameBoard table { border-collapse:collapse; font-size:12px; border:1px solid #5757FF;}
+	#GameBoard td { /*border:1px solid #ffffff;*/ width:20px; height:20px; } 
+
+	.CommonFood {width:4px; height:4px; background-color:#fffd76; border-radius:2px; margin:0 auto;}
+	
+	#MeBody { width:20px; height:20px; background-color:yellow; border-radius:10px; }
+	.OpenMouth_Right:after { content:''; width:0; height:0; display: block; 
+		border-color:transparent #000000 transparent transparent; border-style: solid; border-width:10px;}
+	.OpenMouth_Left:after { content:''; width:0; height:0; display: block; 
+		border-color:transparent transparent transparent #000000; border-style: solid; border-width:10px;}
+	.OpenMouth_Top:after { content:''; width:0; height:0; display: block; 
+		border-color: #000000 transparent transparent transparent; border-style: solid; border-width:10px;}
+	.OpenMouth_DOWN:after { content:''; width:0; height:0; display: block; 
+		border-color: transparent transparent #000000 transparent; border-style: solid; border-width:10px;}
+		
+	#ctrl {position:absolute; top:400px; right:300px;}
+	#ctrl td{ width:40px; height:40px; }
+	#ctrl button{ width:100%;height:100%; }
+	
+	#FoeBody {width:20px; height:20px; background-color:#ff56b8; border-radius:10px 10px 0 0; position: relative;}
+	.soul_skirt:after {content:''; width:0; height:0; display: block;
+		border-color: transparent transparent #000000 transparent; border-style: solid; border-width:5px;
+		position: absolute; top:10px;}
+	.soul_skirt:before {content:''; width:0; height:0; display: block;
+		border-color: transparent transparent #000000 transparent; border-style: solid; border-width:5px;
+		position: absolute; left:10px; top:10px }
+	
+	
+</style>
+
+
+<script>
+	var PrintGameBoard = {
+		Pos: {rows:29, cells:26},
+		Print: function(){
+			var print_board = "<table id=\"tab1\">";
+			
+			for (var i=0; i< this.Pos.rows; i++){
+				print_board += "<tr>";
+				for (var j=0;j<this.Pos.cells;j++){
+					print_board += "<td><div class=\"CommonFood\"></div></td>";
+				}
+				print_board += "</tr>";
+			}
+			print_board += "</table>";
+			
+			document.getElementById("GameBoard").innerHTML = print_board;
+			//PrintGameBoard.Food();
+			
+			/* Y[StartPos,distance],X[StartPos,distance] */
+			this.MapSide([1,3],[1,4]); 
+			this.MapSide([1,3],[6,10]); 
+			this.MapSide([0,3],[12,13]); 
+			this.MapSide([1,3],[15,19]); 
+			this.MapSide([1,3],[21,24]); 
+			
+			this.MapSide([5,6],[1,4]);
+			this.MapSide([5,12],[6,7]);
+			this.MapSide([5,6],[9,16]);
+			this.MapSide([5,12],[18,19]);
+			this.MapSide([5,6],[21,24]);
+			
+			this.MapSide([8,12],[0,4]);
+			this.MapSide([8,9],[8,10]);
+			this.MapSide([7,9],[12,13]);
+			this.MapSide([8,9],[15,17]);
+			this.MapSide([8,12],[21,25]);
+			
+			this.MapSide([15,19],[0,4]);
+			this.MapSide([15,19],[6,7]);
+			this.MapSide([18,19],[9,16]);
+			this.MapSide([15,19],[18,19]);
+			this.MapSide([15,19],[21,25]);
+			
+			this.MapSide([21,22],[1,4]);
+			this.MapSide([21,22],[6,10]);
+			this.MapSide([20,22],[12,13]);
+			this.MapSide([21,22],[15,19]);
+			this.MapSide([21,22],[21,24]);
+			
+			this.MapSide([24,25],[0,1]);
+			this.MapSide([23,25],[3,4]);
+			this.MapSide([24,26],[6,7]);
+			this.MapSide([24,25],[9,16]);
+			this.MapSide([24,26],[18,19]);
+			this.MapSide([23,25],[21,22]);
+			this.MapSide([24,25],[24,25]);
+			
+			this.MapSide([27,27],[1,10]);
+			this.MapSide([26,27],[12,13]);
+			this.MapSide([27,27],[15,24]);
+			
+			/* prison */
+			this.MapSide([11,16],[9,9]);
+			this.MapSide([16,16],[10,15]);
+			this.MapSide([11,16],[16,16]);
+			this.MapSide([11,11],[14,15]);
+			this.MapSide([11,11],[10,11]);
+			
+		},
+		Food: function(){
+			for(var i=0;i<this.Pos.rows; i++){
+				for(var j=0;j<this.Pos.cells;j++){
+					PacMan.SelectPos(i,j).innerHTML = "<div class=\"CommonFood\"></div>";
+				}
+			}
+		},
+		MapSide: function(from,to){
+		
+			for(var i=from[0];i<=from[1]; i++){
+				for(var j=to[0];j<=to[1];j++){
+					PacMan.SelectPos(i,j).style.backgroundColor = "#5757FF";
+					PacMan.SelectPos(i,j).innerHTML = "";
+				}
+			}
+		
+		}
+		
+	}
+	
+	var PacMan ={
+		SelectPos: function(y,x){ return document.getElementById('tab1').rows[y].cells[x];},
+		Pos:{y:23,x:13},
+		Speed:200,
+		Begin:function(){
+        PacMan.ctrl_pos("RIGHT");
+				//Foe.Them(Foe.Pos.y, Foe.Pos.x);
+        Foe.randomMove();
+			},
+		Me: function(y,x){
+				//alert("Me_object");
+				var body = "<div id=\"MeBody\" class=\"OpenMouth\"></div>";
+				PacMan.SelectPos(y,x).innerHTML = body;
+			},
+		MouthFlag:0,
+		LastMouthD:"OpenMouth_Right",
+		OpenCloseMouth: function (SwitchMouth,MouthDirection){
+				if (PacMan.MouthFlag){
+					clearTimeout(Mouth_T);
+				}else{
+					PacMan.MouthFlag++;
+				}
+				
+				Mouth_T = setTimeout(function(){
+					//console.log(SwitchMouth + " / " + MouthDirection );
+					if (SwitchMouth === 1){
+						document.getElementById('MeBody').removeAttribute("class");
+						PacMan.OpenCloseMouth(0,MouthDirection);
+					}else if(SwitchMouth === 0){
+						document.getElementById('MeBody').setAttribute("class",MouthDirection);
+						PacMan.OpenCloseMouth(1,MouthDirection);
+					}else{
+						/* Stop PacMan's mouth */
+						document.getElementById('MeBody').setAttribute("class",PacMan.LastMouthD);
+					}
+				},50);
+			
+			},
+		ctrl_pos: function(pos,on_off){
+				console.log(pos);
+		
+				if (on_off == 1){
+					clearTimeout(Ctrl_T);
+				}
+		
+				var NextBackground = function(NextY,NextX){
+				
+					if ((PacMan.Pos.y + NextY) <= PrintGameBoard.Pos.rows-1 && (PacMan.Pos.y + NextY)>=0 &&
+						(PacMan.Pos.x + NextX) <= PrintGameBoard.Pos.cells-1 && (PacMan.Pos.x + NextX)>=0){
+						return PacMan.SelectPos(PacMan.Pos.y + NextY,PacMan.Pos.x + NextX).style.backgroundColor != "rgb(87, 87, 255)";
+					}else{
+						return true;
+					}
+				};
+				
+				/* Check next setp
+				console.log("(0,1)= "+NextBackground(0,1));
+				console.log("(0,-1)= "+NextBackground(0,-1));
+				console.log("(1,0)= "+NextBackground(1,0));
+				console.log("(-1,0)= "+NextBackground(-1,0));
+				*/
+				if (pos == "LEFT" && PacMan.Pos.x > 0 && NextBackground(0,-1)){
+					Ctrl_T = setTimeout(function(){
+						
+						PacMan.SelectPos(PacMan.Pos.y,PacMan.Pos.x).innerHTML ="";
+						--PacMan.Pos.x;
+						PacMan.Me(PacMan.Pos.y,PacMan.Pos.x);
+						PacMan.OpenCloseMouth(1,"OpenMouth_Left");
+						PacMan.LastMouthD = "OpenMouth_Left";
+						PacMan.ctrl_pos("LEFT");
+					},PacMan.Speed);
+				}else if(pos == "RIGHT" && PacMan.Pos.x < PrintGameBoard.Pos.cells-1 && NextBackground(0,1)){
+					Ctrl_T = setTimeout(function(){
+						
+						PacMan.SelectPos(PacMan.Pos.y,PacMan.Pos.x).innerHTML ="";
+						++PacMan.Pos.x;
+						PacMan.Me(PacMan.Pos.y,PacMan.Pos.x);
+						PacMan.OpenCloseMouth(1,"OpenMouth_Right");
+						PacMan.LastMouthD = "OpenMouth_Right";
+						PacMan.ctrl_pos("RIGHT");
+					},PacMan.Speed);				
+				}else if(pos == "UP" && PacMan.Pos.y > 0 && NextBackground(-1,0)){
+					Ctrl_T = setTimeout(function(){
+						
+						PacMan.SelectPos(PacMan.Pos.y,PacMan.Pos.x).innerHTML ="";
+						--PacMan.Pos.y;
+						PacMan.Me(PacMan.Pos.y,PacMan.Pos.x);
+						PacMan.OpenCloseMouth(1,"OpenMouth_Top");
+						PacMan.LastMouthD = "OpenMouth_Top";
+						PacMan.ctrl_pos("UP");
+					},PacMan.Speed);
+				}else if(pos == "DOWN" && PacMan.Pos.y < PrintGameBoard.Pos.rows-1 && NextBackground(1,0)){
+					Ctrl_T = setTimeout(function(){
+						
+						PacMan.SelectPos(PacMan.Pos.y,PacMan.Pos.x).innerHTML ="";
+						++PacMan.Pos.y;
+						PacMan.Me(PacMan.Pos.y,PacMan.Pos.x);
+						PacMan.OpenCloseMouth(1,"OpenMouth_Down");
+						PacMan.LastMouthD = "OpenMouth_Down";
+						PacMan.ctrl_pos("DOWN");
+					},PacMan.Speed);
+				}else{
+					if (pos == "LEFT"){
+						PacMan.LastMouthD = "OpenMouth_Left";
+					}else if (pos == "RIGHT"){
+						PacMan.LastMouthD = "OpenMouth_Right";
+					}else if (pos == "UP"){
+						PacMan.LastMouthD = "OpenMouth_Top";
+					}else if (pos == "DOWN"){
+						PacMan.LastMouthD = "OpenMouth_Down";
+					}
+				
+					clearTimeout(Ctrl_T);
+					PacMan.MouthFlag=1;
+					PacMan.OpenCloseMouth(2);
+				}
+			}
+	}
+	
+	var Foe = {
+		SelectPos: function(y,x){ return document.getElementById('tab1').rows[y].cells[x];},
+		Pos:{y:13,x:11},
+		Speed:200,
+		Them: function(y,x){
+			var body = "<div id=\"FoeBody\" class=\"soul_skirt soul_skirt_2\"></div>";
+			Foe.SelectPos(y,x).innerHTML = body;
+    },
+    randomMove: function(){
+      var random_step = Math.floor(Math.random()*4),
+      next_step;
+      
+      switch (random_step) {
+        case 0: next_step = 'UP'; break;
+        case 1: next_step = 'DOWN'; break;
+        case 2: next_step = 'LEFT'; break;
+        case 3: next_step = 'RIGHT'; break;
+      }
+      Foe.ctrl_pos(next_step,0);
+    },
+		ctrl_pos: function(pos,on_off){
+				console.log('Foe = %s   on_off=%s', pos, on_off);
+		
+				if (on_off){
+					clearTimeout(Ctrl_T_feo);
+				}
+				var NextBackground = function(NextY,NextX){
+          if (NextY) { 
+            
+          } else {
+          
+          }
+          
+					if ((Foe.Pos.y + NextY) <= PrintGameBoard.Pos.rows-1 && (Foe.Pos.y + NextY)>=0 &&
+						(Foe.Pos.x + NextX) <= PrintGameBoard.Pos.cells-1 && (Foe.Pos.x + NextX)>=0){
+						return Foe.SelectPos(Foe.Pos.y + NextY,Foe.Pos.x + NextX).style.backgroundColor != "rgb(87, 87, 255)";
+					}else{
+						return true;
+					}
+				}, prev_bk ='';
+        
+				if (pos == "LEFT" && Foe.Pos.x > 0 && NextBackground(0,-1)){
+          Ctrl_T_feo = setTimeout(function(){
+            
+            Foe.SelectPos(Foe.Pos.y,Foe.Pos.x).innerHTML = prev_bk;
+            --Foe.Pos.x;
+            Foe.Them(Foe.Pos.y,Foe.Pos.x);
+            Foe.ctrl_pos("LEFT");
+          },Foe.Speed);
+
+				}else if(pos == "RIGHT" && Foe.Pos.x < PrintGameBoard.Pos.cells-1 && NextBackground(0,1)){
+					Ctrl_T_feo = setTimeout(function(){
+            
+						Foe.SelectPos(Foe.Pos.y,Foe.Pos.x).innerHTML = prev_bk;
+						++Foe.Pos.x;
+						Foe.Them(Foe.Pos.y,Foe.Pos.x);
+						Foe.ctrl_pos("RIGHT");
+					},Foe.Speed);				
+				}else if(pos == "UP" && Foe.Pos.y > 0 && NextBackground(-1,0)){
+					Ctrl_T_feo = setTimeout(function(){
+            
+						Foe.SelectPos(Foe.Pos.y,Foe.Pos.x).innerHTML = prev_bk;
+						--Foe.Pos.y;
+						Foe.Them(Foe.Pos.y,Foe.Pos.x);
+						Foe.ctrl_pos("UP");
+					},Foe.Speed);
+				}else if(pos == "DOWN" && Foe.Pos.y < PrintGameBoard.Pos.rows-1 && NextBackground(1,0)){
+					Ctrl_T_feo = setTimeout(function(){
+
+						Foe.SelectPos(Foe.Pos.y,Foe.Pos.x).innerHTML = prev_bk;
+						++Foe.Pos.y;
+						Foe.Them(Foe.Pos.y,Foe.Pos.x);
+						Foe.ctrl_pos("DOWN");
+					},Foe.Speed);
+				} else {
+          clearTimeout(Ctrl_T_feo);
+          Foe.randomMove();
+        }
+			}
+
+	}
+
+
+
+</script>
+
+</head>
+
+<body onload="PrintGameBoard.Print();">
+
+	<div id="GameBoard"></div>
+	
+	<!--div id="MeBody"></div-->
+
+	
+<!-- ************************* Ctrl pos ************************* -->
+	<table id="ctrl">
+		<tr><td></td>
+			<td><button value="UP" onclick="PacMan.ctrl_pos(this.value,1); PacMan.MouthFlag=1;">↑</button></td>
+			<td></td>
+		</tr>
+		<tr>
+			<td><button value="LEFT" onclick="PacMan.ctrl_pos(this.value,1); PacMan.MouthFlag=1;">←</button></td>
+			<td><button onclick="PacMan.Begin();">Begin</button></td>
+			<td><button value="RIGHT" onclick="PacMan.ctrl_pos(this.value,1); PacMan.MouthFlag=1;">→</button></td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><button value="DOWN" onclick="PacMan.ctrl_pos(this.value,1); PacMan.MouthFlag=1;">↓</button></td>
+			<td></td>
+		</tr>
+	</table>
+	
+</body>
+</html>

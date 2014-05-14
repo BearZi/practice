@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="http://code.jquery.com/jquery-latest.js"></script>
+<style type="text/css">
+
+
+</style>
+</head>
+<body>
+
+
+<table id=non_9>
+<tr><td><input type="button" value=" " id='TTT0' onclick="Tic_Tac_Toe(this.id)"></td>
+    <td><input type="button" value=" " id='TTT1' onclick="Tic_Tac_Toe(this.id)"></td>
+    <td><input type="button" value=" " id='TTT2' onclick="Tic_Tac_Toe(this.id)"></td>
+</tr>
+<tr><td><input type="button" value=" " id='TTT3' onclick="Tic_Tac_Toe(this.id)"></td>
+    <td><input type="button" value=" " id='TTT4' onclick="Tic_Tac_Toe(this.id)"></td>
+    <td><input type="button" value=" " id='TTT5' onclick="Tic_Tac_Toe(this.id)"></td>
+</tr>
+<tr><td><input type="button" value=" " id='TTT6' onclick="Tic_Tac_Toe(this.id)"></td>
+    <td><input type="button" value=" " id='TTT7' onclick="Tic_Tac_Toe(this.id)"></td>
+    <td><input type="button" value=" " id='TTT8' onclick="Tic_Tac_Toe(this.id)"></td>
+</tr>
+</table>
+
+<br><br><br>
+
+<input type="button" value="I want (O)" id='get_O' onclick="Player(this.id)">
+<input type="button" value="I want (X)" id='get_X' onclick="Player(this.id)">
+
+<!-- ************************************* -->
+
+<script>
+var input = $("#non_9").find(":button").css({background:"#fff6cc", border:"3px #ffba24 solid"});
+
+
+var count =0;
+function Player (pla){
+
+  if (pla == "get_X") {
+    count =0;            //沒加var表示更改到global(全域變數)
+  }else{
+    count =1;
+  };
+  alert(count);
+};
+
+
+function Tic_Tac_Toe (getid){
+
+  if (document.getElementById(getid).value == " ") {
+    if (count%2 == 0) {
+      var t="X";
+    } else {
+      var t="O";
+    }
+    document.getElementById(getid).value= t;
+    count ++;
+
+//  alert(count);
+
+    win_1(getid,t,count);
+    return count;
+  };
+};
+
+
+
+var TTT=new Array();
+
+var i=0;
+for (i=0;i<9;i++){
+  TTT[i]=" ";
+};
+
+
+function win_1(T,value,count) {
+
+  var c = T.charAt(3);            //charAt( )取字串的第幾位字，從0開始算起
+  TTT[c]= value;
+
+//  alert ("TTT[" + c + "]= " + TTT[c]);
+
+  var winer =0;
+  if (TTT[4]!=" ") { 
+    if ((TTT[4] == TTT[0] && TTT[4] == TTT[8]) ||
+        (TTT[4] == TTT[2] && TTT[4] == TTT[6]) ||
+        (TTT[4] == TTT[1] && TTT[4] == TTT[7]) ||
+        (TTT[4] == TTT[3] && TTT[4] == TTT[5]) ){
+      alert("< " + value + " > " + "Win!" );
+      winer++;
+      window.location.reload();
+    };
+  };
+  if (TTT[0]!=" "){
+    if ((TTT[0] == TTT[1] && TTT[0] == TTT[2]) ||
+        (TTT[0] == TTT[3] && TTT[0] == TTT[6]) ){
+      alert("< " + value + " > " + "Win!" );
+      winer++;
+      window.location.reload();
+    };
+  };
+  if (TTT[8]!=" "){
+    if ((TTT[8] == TTT[2] && TTT[8] == TTT[5]) ||
+        (TTT[8] == TTT[6] && TTT[8] == TTT[7]) ){
+      alert("< " + value + " > " + "Win!" );
+      winer++;
+      window.location.reload();
+    };
+  };
+
+
+  if ((count ==9 && winer==0) && (value == "X")) {
+    alert("Draw! The Game is over");
+    playagain();
+  };
+ 
+
+};
+
+function playagain() { 
+  if(confirm("Play again now?")) {
+    window.location.reload();           //重新整理
+//    return true; 
+  }else {
+//    return false;
+  } 
+} 
+
+
+
+
+</script>
+
+</body>
+</html>
