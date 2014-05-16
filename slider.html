@@ -55,7 +55,7 @@
                         .animate({'opacity': '1'})
                 },
                 auto_slider = function (This) {
-                    console.log(This)
+                    // console.log(This)
                     if (This.flag) {
                         This.index++
                     } else {
@@ -72,11 +72,20 @@
                     }
                     swipe_animate(This)
                     This.timeout = setTimeout(function (){auto_slider(This)} , 3000)
+                },
+                print_pagination = function (This) {
+                    var print_btn = ''
+
+                    print_btn += '<ul class="swipe-btn">'
+                    for (var i=0; i < This.total_count; i++) {
+                        print_btn += '<li>' + (i+1) + '</li>'
+                    }
+                    print_btn += '</ul>'
+                    This.$this_block.append(print_btn)
                 }
 
             var Slider = function (id) {
-                    var print_btn = '',
-                        This = this
+                    var This = this
 
                     This.timeout = 0
                     This.flag = 1
@@ -87,12 +96,7 @@
                     This.$swipe_img = This.$this_block.find('.swipe-img li img')
                     This.total_count = This.$swipe_img.length
 
-                    print_btn += '<ul class="swipe-btn">'
-                    for (var i=0; i < This.total_count; i++) {
-                        print_btn += '<li>' + (i+1) + '</li>'
-                    }
-                    print_btn += '</ul>'
-                    This.$this_block.append(print_btn)
+                    print_pagination(This)
 
                     This.$swipe_btn = This.$this_block.find('.swipe-btn')
                     This.$swipe_btn_li = This.$this_block.find('.swipe-btn li')
@@ -110,10 +114,19 @@
                     })
                     auto_slider(This)
                 }
+                Slider.prototype.stop = function () {
+                    clearTimeout(this.timeout)
+                    console.log('stop')
+                }
+                Slider.prototype.begin = function () {
+                    auto_slider(this)
+                }
                 return Slider
         })()
         var Slider1 = new Slider('test1')
         var Slider2 = new Slider('test2')
+
+        Slider1.stop()
     })
 
 </script>
