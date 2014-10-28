@@ -111,7 +111,7 @@
         0 = empty
         1 = food
         2 = wall
-        99 = packman
+        99 = pac man
         100 = soul
     */
         (function () {
@@ -120,16 +120,35 @@
                 board_arr = [],
                 board = document.getElementById('board'),
                 MoveBody = (function () {
-                    function turnRight () {
-                        
-                    }
 
                     var MoveBody = function (body) {
                         this.body = document.querySelector(body);
+                        this.own_status = {x:0, y:0};
 
                         console.log('zizi =%o / %o', body, this.body.className);
-
                     };
+
+                    MoveBody.prototype.openMouse = function () {
+                        var This = this;
+                        This.body.className += ' open_mouth_right';
+
+                        clearTimeout(This.st);
+                        This.st = setTimeout(function(){
+                            This.body.className = This.body.className.replace(' open_mouth_right', '');
+                            This.openMouse();
+                        }, 500);
+                    }
+                    MoveBody.prototype.turnRight = function () {
+                        var This = this;
+
+                        This.openMouse();
+                        This.next_status = board_arr[This.own_status.x][This.own_status.y+1];
+
+                        // if (This.next_status < 2) {
+                        //     setTimeout(This.turnRight, 100);
+                        // }
+                    }
+
                     return MoveBody;
                 }());
 
@@ -215,7 +234,9 @@
                 drawBoard();
             }
             init();
-            var moveBody = new MoveBody('.b_99');
+            var PacMan = new MoveBody('.b_99');
+            PacMan.turnRight();
+
         }());
     </script>
 </body>
