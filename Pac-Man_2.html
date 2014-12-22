@@ -147,12 +147,12 @@
                     MoveBody.prototype.turnRight = function () {
                         var This = this;
 
-                        This.openMouse(' open_mouth_right');
+                        This.openMouse('open_mouth_right');
                         This.next_status = board_arr[This.own_status.x][This.own_status.y+1];
 
-                        // if (This.next_status < 2) {
-                        //     setTimeout(This.turnRight, 100);
-                        // }
+                        if (This.next_status < 2) {
+                            setTimeout(This.turnRight, 100);
+                        }
                     }
 
                     return MoveBody;
