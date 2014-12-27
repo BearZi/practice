@@ -1,0 +1,59 @@
+#my_poker {
+    border: 1px solid orange;
+}
+.back { 
+    background: #ccc;
+    width: 100%;
+    height: 100%;
+    transform: rotateY(180deg);
+    -webkit-transform: rotateY(180deg);
+ }
+.spades { background: url(../images/spades.png) }
+.hearts {}
+.diamonds {}
+.clubs {}
+.suits-1 { background-position: 0 -1px; }
+.suits-2 { background-position: 0 -114px; }
+.suits-3 { background-position: 0 -225px; }
+.suits-4 { background-position: 0 -335px; }
+.suits-5 { background-position: 0 -450px; }
+.suits-6 { background-position: 0 -562px; }
+.suits-7 { background-position: 0 -674px; }
+.suits-8 { background-position: 0 -787px; }
+.suits-9 { background-position: 0 -902px; }
+.suits-10 { background-position: 0 -1013px; }
+.suits-11 { background-position: 0 -1126px; }
+.suits-12 { background-position: 0 -1238px; }
+.suits-13 { background-position: 0 -1351px; }
+
+.poker {
+    position: absolute;
+    width: 75px;
+    height: 110px;
+    cursor: pointer;
+    left: 0;
+    top: 0;
+}
+.trans_1s {
+    transition-duration: 1s;
+    -webkit-transition-duration: 1s;
+}
+.trans_2s {
+    transition-duration: 2s;
+    -webkit-transition-duration: 2s;
+}
+.move {
+    top: 10%;
+    left: 50%;
+    margin-left: -37.5px;
+}
+.turn {
+    transform: rotateY(270deg);
+    -webkit-transform: rotateY(270deg);
+}
+.turn_back {
+    transform: rotateY(360deg);
+    -webkit-transform: rotateY(360deg);
+}
+
+
