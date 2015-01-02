@@ -1,0 +1,190 @@
+<html>
+<style>
+	#message { color:red; }
+	div { white-space: nowrap }
+	span { position: relative; display:inline-block; width:15px; height:15px; border: solid 1px #CCC; }
+/*
+	span._block:before { content: ''; border-top: solid 1px red; display: block; top: 7px; position: relative; }
+	span._block:after { content: ''; border-left: solid 1px red; display: block; left: 7px; position: relative; height: 100%; }
+	span.pointer { content: ''; position: absolute; display: block; cursor: pointer; width: 50%; height: 50%; left: 25%; top: 25%; }
+*/
+	.white:after { content:''; border: solid 1px black; width:11px; height:11px; top: 1px; left: 1px; border-radius: 5px; position: absolute; }
+	.black:after { content:''; border: solid 1px black; width:11px; height:11px; top: 1px; left: 1px; border-radius: 5px; position: absolute; background-color: black; }
+</style>
+<body>
+	<div id="board"></div>
+	<div id="message"></div>
+</body>
+<script>
+	var board_main = function () {
+		var count = 0,user = '', tmp_b=0, tmp_w=0,
+		displayBoard = function () {
+			var board = '', num=0;
+			for (var i =0; i < 20; i++) {
+				board += '<div>';
+				for (var j = 0; j < 20; j++) {
+					board += '<span id="' + i + '_' + j +'"></span>';
+					num++;
+				}
+				board += '</div>';
+			}
+			document.getElementById('board').innerHTML = board;
+		},
+		clickBlock = function () {
+			var hasWinner, 
+			span_obj = document.getElementsByTagName("span"),
+			msg_obj = document.getElementById('message');
+			for ( var i = 0; i < span_obj.length; i++ ) {
+				span_obj[i].onclick = function () {
+					if ( !this.getAttribute('class') ) {
+						count++;
+						user =  ( count%2 == 1 ) ? 'black' : 'white';
+						this.setAttribute("class",user);
+					} else {
+						msg_obj.innerHTML = '* It has existed!';
+						setTimeout ( function(){ msg_obj.innerHTML = ''; } ,3000);
+					}
+					console.log(this.getAttribute("id"));
+					hasWinner = checkWinner(this.getAttribute("id"));
+					//console.log(hasWinner);
+					if (hasWinner) {
+						alert( hasWinner + " is Winner !");
+					}
+				};
+			}
+		},
+		checkWinner = function (pos) {
+			var is_black_white, winner,
+			p_x = parseInt(pos.split('_')[0],10),
+			p_y = parseInt(pos.split('_')[1],10);
+		
+			/*horizontal*/
+			for (var i = 0; i < 20; i++) {
+				//console.log(document.getElementById( p_x + '_' + i ).getAttribute('class'));
+				is_black_white = document.getElementById( p_x + '_' + i ).getAttribute('class');
+				if ( is_black_white === 'black' ) {
+					tmp_b++;
+				} else if ( is_black_white === 'white' ) {
+					tmp_w--;
+				} else {
+					tmp_b=0;
+					tmp_w=0;
+				}
+				if ( tmp_b > 4 || tmp_w > 4) {
+					winner = ( tmp_b > 4 ) ? 'black' : 'white';
+					return winner;
+				}
+			}
+			tmp_b=0;
+			tmp_w=0;
+			/*vertical*/
+			for (var i = 0; i < 20; i++) {
+				//console.log(document.getElementById( i + '_' + p_y ).getAttribute('class'));
+				is_black_white = document.getElementById( i + '_' + p_y ).getAttribute('class');
+				if ( is_black_white === 'black' ) {
+					tmp_b++;
+				} else if ( is_black_white === 'white' ) {
+					tmp_w--;
+				} else {
+					tmp_b=0;
+					tmp_w=0;
+				}
+				if ( tmp_b > 4 || tmp_w > 4) {
+					winner = ( tmp_b > 4 ) ? 'black' : 'white';
+					return winner;
+				}
+			}
+			tmp_b=0;
+			tmp_w=0;
+
+			/*bias left to right*/
+			var block_total = p_y + (20-p_x),j=0;
+			if (block_total > 20) {
+				block_total = p_x + (20-p_y);
+			}
+			for (var i = 0; i < block_total; i++ ) {
+				j = p_x - p_y + i;
+				pos = j + '_' + i;
+				if (j < 0) {
+					j = p_y - p_x + i;
+					pos = i + '_' + j;
+				}
+				//console.log(pos);
+				is_black_white = document.getElementById( pos ).getAttribute('class');
+
+				if ( is_black_white === 'black' ) {
+					tmp_b++;
+				} else if ( is_black_white === 'white' ) {
+					tmp_w++;
+				} else {
+					tmp_b=0;
+					tmp_w=0;
+				}
+				//console.log("tmp_b = %s  tmp_w = %s ",tmp_b, tmp_w);
+				if ( tmp_b > 4 || tmp_w > 4) {
+					winner = ( tmp_b > 4 ) ? 'black' : 'white';
+					return winner;
+				}
+			}
+			tmp_b=0;
+			tmp_w=0;
+
+			/*bias right to left*/
+			var block_total = p_y + (20-p_x),j=0;
+			if (block_total > 20) {
+				block_total = p_x + (20-p_y);
+			}
+			for (var i = 0; i < block_total; i++ ) {
+				j = p_x - p_y + i;
+				pos = j + '_' + i;
+				if (j < 0) {
+					j = p_y - p_x + i;
+					pos = i + '_' + j;
+				}
+				console.log(pos);
+				is_black_white = document.getElementById( pos ).getAttribute('class');
+
+				if ( is_black_white === 'black' ) {
+					tmp_b++;
+				} else if ( is_black_white === 'white' ) {
+					tmp_w++;
+				} else {
+					tmp_b=0;
+					tmp_w=0;
+				}
+				console.log("tmp_b = %s  tmp_w = %s ",tmp_b, tmp_w);
+				if ( tmp_b > 4 || tmp_w > 4) {
+					winner = ( tmp_b > 4 ) ? 'black' : 'white';
+					return winner;
+				}
+			}
+			tmp_b=0;
+			tmp_w=0;
+			
+			return 0;
+		},
+		init = function () {
+			displayBoard();
+			clickBlock();
+			
+			var _board = document.querySelector('#board');
+			
+      
+			_board.addEventListener('click', function(e){
+				console.log( e.target )
+			}, false)
+			
+	
+      
+		};
+		return {
+			init : init
+		};
+	}();
+	board_main.init();
+</script>
+
+
+</html>
+
+
