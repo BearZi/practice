@@ -19,14 +19,15 @@
  */
 .syntaxhighlighter {
   background-color: #fff;
-  border: 1px solid #ccc;
-  padding: 10px 0;
+  border: solid #ccc;
+  padding: 5px 0;
+  border-width: 1px 1px 1px 3px;
 }
 .syntaxhighlighter .line.alt1 {
   background-color: #FFF !important;
 }
 .syntaxhighlighter .line.alt2 {
-  background-color: #F5F5F5 !important;
+  /*background-color: #F5F5F5 !important;*/
 }
 .syntaxhighlighter .line.highlighted.alt1, .syntaxhighlighter .line.highlighted.alt2 {
   background-color: #323e41;
