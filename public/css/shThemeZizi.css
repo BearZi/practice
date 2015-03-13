@@ -79,11 +79,12 @@
   color: #808080;
 }
 .syntaxhighlighter .comments, .syntaxhighlighter .comments a {
-  color: #878a85;
+  color: #51A825;
+  background-color: rgba(81, 168, 37, 0.1) !important;
 }
 .syntaxhighlighter .string, .syntaxhighlighter .string a {
   color: #DE969E;
-  background-color: #FFF0F0;
+  background-color: #FFF0F0 !important;
 }
 .syntaxhighlighter .keyword {
   color: #5ba1cf;
