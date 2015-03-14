@@ -119,3 +119,7 @@
 .syntaxhighlighter .color3, .syntaxhighlighter .color3 a {
   color: #ffaa3e;
 }
+
+.syntaxhighlighter table td.code .line, .syntaxhighlighter table td.gutter .line {
+  padding-top: 4px !important;;
+}
