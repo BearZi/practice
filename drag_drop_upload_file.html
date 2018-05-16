@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Drop Drag Upload</title>
+
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="https://use.fontawesome.com/1ecea5b858.js"></script>
+  
+  <style>
+    .drag-upload {
+      width: 100%;
+      min-height: 400px;
+      position: relative;
+      outline: 2px dashed #92b0b3;
+      outline-offset: -10px;
+      transition: .15s ease-in-out;
+      display: block;
+    }
+    .drag-upload.hover {
+      outline-offset: -20px;
+    }
+    .drag-upload .drag-info {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      -webkit-transform: translate(-50%, -50%);
+              transform: translate(-50%, -50%);
+    }
+    .drag-upload .file-lists {
+      display: flex;
+      flex-wrap: wrap;
+      padding: 30px;
+    }
+    .drag-upload .file-lists .file-col {
+      width: 20%;
+      padding: 10px 5px;
+      text-align: center;
+    }
+    .drag-upload .file-lists .file-col .fa {
+      font-size: 40px;
+    }
+    .drag-upload .file-lists .file-col .file-name {
+      display: block;
+      height: 40px;
+      line-height: 1.3;
+      margin-top: 10px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      display: -moz-box;
+      -moz-line-clamp: 2;
+      display: box;
+      line-clamp: 2;
+      box-orient: vertical;
+      text-align: center;
+    }
+
+    /*** .scss file ***/
+    /* .drag-upload {
+      width: 100%;
+      min-height: 400px;
+      position: relative;
+      outline: 2px dashed #92b0b3;
+      outline-offset: -10px;
+      transition: .15s ease-in-out;
+
+      &.hover {
+        outline-offset: -20px;
+      }
+
+      .drag-info {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      .file-lists {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 30px;
+
+        .file-col {
+          width: 20%;
+          padding: 10px 5px;
+          text-align: center;
+
+          .fa {
+            font-size: 40px;
+          }
+          .file-name {
+            height: 40px;
+            line-height: 1.3;
+            margin-top: 10px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            display: -moz-box;
+            -moz-line-clamp: 2;
+            -moz-box-orient: vertical;
+            display: box;
+            line-clamp: 2;
+            box-orient: vertical;
+          }
+        }
+      }
+    } */
+  </style>
+</head>
+<body>
+  <label id="dragUpload" for="file" class="drag-upload">
+    <div class="file-lists"></div>
+    <div class="drag-info">
+      <a  id="chooseFile" class="choose-file">Choose files</a> <span class="drag-text">or Drag it here</span></div>
+  </label>
+  <input type="file" id="files" name="files[]" multiple class="hidden" />
+
+  <script>
+    const documentUpload = {
+      $dragUpload: null,
+      $files: null,
+
+      reg_file_format: {
+        img: '^.*.(jpg|jpeg|png|bmp|gif|svg)$',
+        txt: '^.*.(txt)$',
+        pdf: '^.*.(pdf)$',
+        zip: '^.*.(zip|rar)$',
+        word: '^.*.(doc|docx)$'
+      },
+
+      file_icon_map: {
+        img: 'fa-file-image-o',
+        txt: 'fa-file-text-o',
+        pdf: 'fa-file-pdf-o',
+        zip: 'fa-file-zip-o',
+        word: 'fa-file-word-o',
+        default: 'fa-file-o'
+      },
+
+      fileDragHover (e) {
+        e.stopPropagation();
+        e.preventDefault();
+
+        if (e.type == "dragover") {
+          documentUpload.$dragUpload.addClass('hover');
+        } else {
+          documentUpload.$dragUpload.removeClass('hover');
+        }
+
+        if (e.type == "drop") {
+          documentUpload.$dragUpload.addClass('has-file');
+        }
+
+      },
+
+      fileSelectHandler (e) {
+        let that = e.data.that,
+            files = e.originalEvent.dataTransfer.files,
+            html = '',
+            file_name = '',
+            file_format = '',
+            icon_class = ''
+
+        that.fileDragHover(e);
+
+        for (var i = 0, f; f = files[i]; i++) {
+          file_name = files[i]['name'];
+          file_format = that.checkFormat(file_name) || 'default';
+          icon_class = that.file_icon_map[file_format];
+
+          html += `<div class="file-col"><div><i class="fa ${icon_class}"></i></div><div class="file-name">${file_name}</div></div>`;
+        }
+        $('.file-lists').html(html);
+        that.$files.prop('files', files);
+      },
+
+      checkFormat (name) {
+        let that = this,
+            reg_file_format = that.reg_file_format,
+            reg;
+
+        for (var k in reg_file_format) {
+          reg = new RegExp(reg_file_format[k], 'i');
+
+          if (name.search(reg) > -1) {
+            return k;
+            break;
+          }
+        }
+      },
+
+      dragEvent () {
+        let that = this,
+            $dragUpload = that.$dragUpload,
+            $files = that.$files;
+
+        // $files.on('change', {that: that}, that.fileSelectHandler);
+        $dragUpload.on('dragover', that.fileDragHover);
+        $dragUpload.on('dragleave', that.fileDragHover);
+        $dragUpload.on('drop', {that: that}, that.fileSelectHandler);
+      },
+
+      init () {
+        this.$dragUpload = $('#dragUpload');
+        this.$files = $('#files');
+
+        if (window.File && window.FileList && window.FileReader) {
+          this.dragEvent();
+        }
+      }
+    }
+
+    documentUpload.init();
+  </script>
+</body>
+</html>
